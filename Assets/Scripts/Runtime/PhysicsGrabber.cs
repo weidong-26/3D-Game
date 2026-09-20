@@ -10,7 +10,16 @@ namespace LightweightGame.Runtime
         private Text prompt;
         private PickupItem heldItem;
         private Collider[] heldColliders;
+        private bool[] colliderStates;
+        private Transform originalParent;
+        private Vector3 originalLocalScale;
+        private Vector3 originalWorldScale;
+        private bool originalKinematic;
+        private bool originalGravity;
+        private Vector3 originalVelocity;
+        private Vector3 originalAngularVelocity;
         public bool IsHolding { get { return heldItem != null; } }
+        public bool CanUseHeld { get { return heldItem != null && heldItem.CanUse; } }
 
         public void SetCamera(Camera value) { viewCamera = value; }
         public void SetHandAnchor(Transform value) { handAnchor = value; }
@@ -60,16 +69,40 @@ namespace LightweightGame.Runtime
 
         private void TryPickup()
         {
-            heldItem = FindCandidate();
-            if (heldItem == null) return;
+            Pickup(FindCandidate());
+        }
+
+        public void Pickup(PickupItem candidate)
+        {
+            if (heldItem != null) return;
+            if (candidate == null) return;
+            if ((handAnchor.lossyScale - Vector3.one).sqrMagnitude > 0.000001f)
+            {
+                Debug.LogError("Hand anchor and its parents must have unit scale.");
+                return;
+            }
+            heldItem = candidate;
+            originalParent = heldItem.transform.parent;
+            originalLocalScale = heldItem.transform.localScale;
+            originalWorldScale = heldItem.transform.lossyScale;
             Rigidbody body = heldItem.GetComponent<Rigidbody>();
+            originalKinematic = body.isKinematic;
+            originalGravity = body.useGravity;
+            originalVelocity = body.linearVelocity;
+            originalAngularVelocity = body.angularVelocity;
             body.linearVelocity = Vector3.zero;
             body.angularVelocity = Vector3.zero;
             body.isKinematic = true;
             body.useGravity = false;
             heldColliders = heldItem.GetComponentsInChildren<Collider>();
-            foreach (Collider collider in heldColliders) collider.enabled = false;
-            heldItem.transform.SetParent(handAnchor, false);
+            colliderStates = new bool[heldColliders.Length];
+            for (int i = 0; i < heldColliders.Length; i++)
+            {
+                colliderStates[i] = heldColliders[i].enabled;
+                heldColliders[i].enabled = false;
+            }
+            heldItem.transform.SetParent(handAnchor, true);
+            heldItem.transform.localScale = originalWorldScale;
             heldItem.transform.localPosition = Vector3.zero;
             heldItem.transform.localRotation = Quaternion.identity;
         }
@@ -77,14 +110,30 @@ namespace LightweightGame.Runtime
         private void Release()
         {
             if (heldItem == null) return;
-            heldItem.transform.SetParent(null, true);
-            heldItem.transform.position = transform.position + transform.forward * 1.15f + Vector3.up * 0.9f;
+            heldItem.transform.SetParent(originalParent, false);
+            heldItem.transform.localScale = originalLocalScale;
+            heldItem.transform.position = transform.position + transform.forward * 1.4f + Vector3.up * 0.9f;
             Rigidbody body = heldItem.GetComponent<Rigidbody>();
+            body.isKinematic = originalKinematic;
+            body.useGravity = originalGravity;
+            body.linearVelocity = originalVelocity;
+            body.angularVelocity = originalAngularVelocity;
+            for (int i = 0; i < heldColliders.Length; i++) heldColliders[i].enabled = colliderStates[i];
+            heldColliders = null;
+            colliderStates = null;
+            heldItem = null;
+        }
+
+        public void ReleaseHeld() { Release(); }
+        public void UseHeld() { if (heldItem != null) heldItem.Use(); }
+        public void ThrowHeld()
+        {
+            if (heldItem == null) return;
+            Rigidbody body = heldItem.GetComponent<Rigidbody>();
+            Release();
             body.isKinematic = false;
             body.useGravity = true;
-            foreach (Collider collider in heldColliders) collider.enabled = true;
-            heldColliders = null;
-            heldItem = null;
+            body.linearVelocity = transform.forward * 6f + Vector3.up * 2f;
         }
 
         private void OnDisable()

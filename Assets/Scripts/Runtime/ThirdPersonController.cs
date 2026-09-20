@@ -50,10 +50,16 @@ namespace LightweightGame.Runtime
             grounded = false;
         }
 
+        private void ReturnToSpawn()
+        {
+            safePosition = spawnPosition;
+            Respawn();
+        }
+
         private void Update()
         {
             if (cameraTransform == null) return;
-            if (Input.GetKeyDown(KeyCode.R)) Respawn();
+            if (Input.GetKeyDown(KeyCode.R)) ReturnToSpawn();
             if (MovementRules.NeedsRespawn(transform.position.y, respawnHeight)) Respawn();
 
             Vector3 forward = cameraTransform.forward;
@@ -76,16 +82,21 @@ namespace LightweightGame.Runtime
                 if (verticalVelocity < 0f) verticalVelocity = -2f;
                 if (transform.position.y > spawnPosition.y - 0.5f) safePosition = transform.position;
             }
-            if (Input.GetButtonDown("Jump") && MovementRules.CanJump(grounded, airJumpsUsed, maximumAirJumps))
+            TryJump(Input.GetButtonDown("Jump"));
+            verticalVelocity += gravity * Time.deltaTime;
+            CollisionFlags flags = controller.Move((planarVelocity + Vector3.up * verticalVelocity) * Time.deltaTime);
+            if ((flags & CollisionFlags.Above) != 0 && verticalVelocity > 0f) verticalVelocity = 0f;
+            grounded = (flags & CollisionFlags.Below) != 0;
+        }
+
+        private void TryJump(bool pressed)
+        {
+            if (pressed && MovementRules.CanJump(grounded, airJumpsUsed, maximumAirJumps))
             {
                 if (!grounded) airJumpsUsed++;
                 verticalVelocity = MovementRules.JumpVelocity(jumpHeight, gravity);
                 grounded = false;
             }
-            verticalVelocity += gravity * Time.deltaTime;
-            CollisionFlags flags = controller.Move((planarVelocity + Vector3.up * verticalVelocity) * Time.deltaTime);
-            if ((flags & CollisionFlags.Above) != 0 && verticalVelocity > 0f) verticalVelocity = 0f;
-            grounded = (flags & CollisionFlags.Below) != 0;
         }
 
         private void OnControllerColliderHit(ControllerColliderHit hit)

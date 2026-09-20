@@ -21,21 +21,10 @@ namespace LightweightGame.Runtime
         private void LateUpdate()
         {
             if (target == null) return;
-            if (Input.GetKeyDown(KeyCode.Escape))
-            {
-                Cursor.lockState = CursorLockMode.None;
-                Cursor.visible = true;
-            }
-            else if (Input.GetMouseButtonDown(0) && Cursor.lockState != CursorLockMode.Locked)
-            {
-                Cursor.lockState = CursorLockMode.Locked;
-                Cursor.visible = false;
-            }
-            if (Cursor.lockState == CursorLockMode.Locked)
-            {
-                yaw += Input.GetAxis("Mouse X") * mouseSensitivityX;
-                pitch = Mathf.Clamp(pitch - Input.GetAxis("Mouse Y") * mouseSensitivityY, minimumPitch, maximumPitch);
-            }
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+            if (Input.GetMouseButton(1))
+                ApplyMouseDelta(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
             distance = Mathf.Clamp(distance - Input.GetAxis("Mouse ScrollWheel") * 2f, minimumDistance, maximumDistance);
             Quaternion rotation = Quaternion.Euler(pitch, yaw, 0f);
             Vector3 focus = target.position + Vector3.up * 1.45f;
@@ -48,6 +37,12 @@ namespace LightweightGame.Runtime
                 actualDistance = Mathf.Min(actualDistance, Mathf.Max(0.4f, hits[i].distance - 0.1f));
             }
             transform.SetPositionAndRotation(focus + backward * actualDistance, rotation);
+        }
+
+        private void ApplyMouseDelta(float x, float y)
+        {
+            yaw += x * mouseSensitivityX;
+            pitch = Mathf.Clamp(pitch - y * mouseSensitivityY, minimumPitch, maximumPitch);
         }
     }
 }

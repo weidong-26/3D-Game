@@ -8,7 +8,9 @@ namespace UnityEngine
         public string name;
         public static void Destroy(Object value) { }
         public static T FindFirstObjectByType<T>() where T : Object { return null; }
+        public static T[] FindObjectsByType<T>(FindObjectsSortMode mode) where T : Object { return new T[0]; }
     }
+    public enum FindObjectsSortMode { None }
 
     public class Component : Object
     {
@@ -19,11 +21,12 @@ namespace UnityEngine
         public T GetComponentInChildren<T>() where T : Component, new() { return new T(); }
         public T GetComponentInParent<T>() where T : Component, new() { return new T(); }
         public T[] GetComponentsInChildren<T>() where T : Component, new() { return new T[0]; }
+        public T[] GetComponentsInChildren<T>(bool includeInactive) where T : Component, new() { return new T[0]; }
     }
 
     public class Behaviour : Component { public bool enabled; }
     public class MonoBehaviour : Behaviour { }
-    public class Font : Object { }
+    public class Font : Object { public static Font CreateDynamicFontFromOSFont(string name, int size) { return new Font(); } }
 
     [AttributeUsage(AttributeTargets.Field)]
     public sealed class SerializeField : Attribute { }
@@ -36,12 +39,13 @@ namespace UnityEngine
     {
         public RuntimeInitializeOnLoadMethodAttribute(RuntimeInitializeLoadType type) { }
     }
-    public enum RuntimeInitializeLoadType { AfterSceneLoad }
+    public enum RuntimeInitializeLoadType { BeforeSceneLoad, AfterSceneLoad }
 
     public class GameObject : Object
     {
         public Transform transform;
         public string tag;
+        public bool activeSelf;
         public GameObject() { transform = new Transform(this); }
         public GameObject(string value, params Type[] types) { name = value; transform = new Transform(this); }
         public static GameObject CreatePrimitive(PrimitiveType type) { return new GameObject(); }
@@ -59,6 +63,8 @@ namespace UnityEngine
         public Vector3 position;
         public Vector3 localPosition;
         public Vector3 localScale;
+        public Vector3 lossyScale;
+        public Transform parent;
         public Quaternion rotation;
         public Quaternion localRotation;
         public Vector3 forward;
@@ -70,6 +76,7 @@ namespace UnityEngine
         public void SetPositionAndRotation(Vector3 value, Quaternion rotationValue) { }
         public bool IsChildOf(Transform parent) { return false; }
         public Transform GetChild(int index) { return new Transform(); }
+        public Transform Find(string name) { return new Transform(); }
     }
 
     public struct Vector2
@@ -94,6 +101,7 @@ namespace UnityEngine
         public void Normalize() { }
         public static Vector3 ClampMagnitude(Vector3 value, float maxLength) { return value; }
         public static Vector3 MoveTowards(Vector3 current, Vector3 target, float distance) { return target; }
+        public static Vector3 Lerp(Vector3 a, Vector3 b, float t) { return b; }
         public static float Distance(Vector3 a, Vector3 b) { return 0f; }
         public static Vector3 operator +(Vector3 a, Vector3 b) { return a; }
         public static Vector3 operator -(Vector3 a, Vector3 b) { return a; }
@@ -142,6 +150,8 @@ namespace UnityEngine
         public Material(Shader shader) { }
     }
     public class Renderer : Component { public Material sharedMaterial; public Material material = new Material(null); }
+    public class MeshFilter : Component { public Mesh sharedMesh; }
+    public class MeshRenderer : Renderer { }
     public class SkinnedMeshRenderer : Renderer
     {
         public Mesh sharedMesh;
@@ -197,23 +207,7 @@ namespace UnityEngine
         public static Camera main { get { return new Camera(); } }
         public float fieldOfView;
         public CameraClearFlags clearFlags;
-        public RenderTexture targetTexture;
-        public void Render() { }
         public Ray ViewportPointToRay(Vector3 value) { return new Ray(); }
-    }
-    public class RenderTexture : Object
-    {
-        public static RenderTexture active;
-        public RenderTexture(int width, int height, int depth) { }
-    }
-    public enum TextureFormat { RGB24 }
-    public struct Rect { public Rect(float x, float y, float width, float height) { } }
-    public class Texture2D : Object
-    {
-        public Texture2D(int width, int height, TextureFormat format, bool mipChain) { }
-        public void ReadPixels(Rect rect, int x, int y) { }
-        public void Apply() { }
-        public byte[] EncodeToPNG() { return new byte[0]; }
     }
     public enum CameraClearFlags { Skybox }
     public class AudioListener : Behaviour { }
@@ -227,9 +221,6 @@ namespace UnityEngine
         public bool applyRootMotion;
         public void CrossFade(string state, float duration) { }
     }
-    public class WaitForEndOfFrame { }
-    public class WaitForSeconds { public WaitForSeconds(float seconds) { } }
-    public static class ScreenCapture { public static void CaptureScreenshot(string path) { } }
     public class Canvas : Behaviour { public RenderMode renderMode; public int sortingOrder; }
     public enum RenderMode { ScreenSpaceOverlay }
     public class RectTransform : Transform
@@ -242,11 +233,15 @@ namespace UnityEngine
     public struct RaycastHit { public Rigidbody rigidbody; public Collider collider; public float distance; }
     public static class Physics
     {
+        public static void SyncTransforms() { }
         public static bool Raycast(Ray ray, out RaycastHit hit, float distance) { hit = new RaycastHit(); return false; }
         public static RaycastHit[] SphereCastAll(Vector3 origin, float radius, Vector3 direction, float distance) { return new RaycastHit[0]; }
         public static Collider[] OverlapSphere(Vector3 origin, float radius) { return new Collider[0]; }
     }
     public static class Time { public static float deltaTime, time; }
+    public class WaitForEndOfFrame { }
+    public class WaitForSeconds { public WaitForSeconds(float seconds) { } }
+    public static class ScreenCapture { public static void CaptureScreenshot(string path) { } }
     public static class Input
     {
         public static float GetAxis(string value) { return 0f; }
@@ -257,7 +252,7 @@ namespace UnityEngine
         public static bool GetMouseButtonDown(int button) { return false; }
         public static bool GetMouseButton(int button) { return false; }
     }
-    public enum KeyCode { LeftShift, E, F, R, Escape }
+    public enum KeyCode { LeftShift, E, F, R, C, Escape }
     public static class Cursor { public static CursorLockMode lockState; public static bool visible; }
     public enum CursorLockMode { None, Locked }
     public static class Application { public static string persistentDataPath; public static string dataPath; public static int targetFrameRate; public static void Quit(int code) { } }
@@ -274,8 +269,8 @@ namespace UnityEngine.Events
 {
     public delegate void UnityAction();
     public delegate void UnityAction<T>(T value);
-    public class UnityEvent { public void AddListener(UnityAction action) { } }
-    public class UnityEvent<T> { public void AddListener(UnityAction<T> action) { } }
+    public class UnityEvent { public void AddListener(UnityAction action) { } public void Invoke() { } }
+    public class UnityEvent<T> { public void AddListener(UnityAction<T> action) { } public void Invoke(T value) { } }
 }
 
 namespace UnityEngine.UI

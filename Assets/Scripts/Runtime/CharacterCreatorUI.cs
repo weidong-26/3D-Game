@@ -43,6 +43,12 @@ namespace LightweightGame.Runtime
             gameObject.SetActive(false);
         }
 
+        public void Show()
+        {
+            gameObject.SetActive(true);
+            Refresh();
+        }
+
         private void Build(Transform canvas)
         {
             GameObject panel = CreateUiObject("Panel", canvas, typeof(Image));

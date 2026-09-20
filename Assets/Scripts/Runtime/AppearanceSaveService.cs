@@ -7,9 +7,10 @@ namespace LightweightGame.Runtime
 {
     public static class AppearanceSaveService
     {
+        internal static string TestPath;
         public static string SavePath
         {
-            get { return Path.Combine(Application.persistentDataPath, "appearance.json"); }
+            get { return TestPath ?? Path.Combine(Application.persistentDataPath, "appearance.json"); }
         }
 
         public static AppearanceData LoadOrDefault()

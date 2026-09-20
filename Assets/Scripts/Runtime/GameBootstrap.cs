@@ -10,8 +10,18 @@ namespace LightweightGame.Runtime
         private ThirdPersonCamera cameraController;
         private CharacterPreviewCamera previewCamera;
         private PhysicsGrabber grabber;
+        private InteractionController interaction;
+        private PoseController pose;
+        private WakeFlow wake;
+        private bool enteredWorld;
         private CharacterCreatorUI creatorUi;
         private GameObject gameplayHud;
+
+        private void Update()
+        {
+            if (gameplayHud != null && gameplayHud.activeSelf && wake.State == WakeState.FreeControl && Input.GetKeyDown(KeyCode.C))
+                OpenCreator();
+        }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static void Initialize()
@@ -50,14 +60,30 @@ namespace LightweightGame.Runtime
             grabber = player.AddComponent<PhysicsGrabber>();
             grabber.SetCamera(mainCamera);
             grabber.SetHandAnchor(appearance.HandAnchor);
+            pose = player.AddComponent<PoseController>();
+            pose.Initialize(playerController, appearance.GetComponentInChildren<Animator>());
+            foreach (PickupItem item in FindObjectsByType<PickupItem>(FindObjectsSortMode.None))
+            {
+                PickupItem picked = item;
+                item.gameObject.AddComponent<Interactable>().Configure("拾取 " + item.DisplayName, delegate { grabber.Pickup(picked); });
+            }
+            interaction = player.AddComponent<InteractionController>();
             player.AddComponent<CharacterMotionAnimator>().Initialize(playerController, grabber, appearance.GetComponentInChildren<Animator>());
 
             AppearanceData data = AppearanceSaveService.LoadOrDefault();
             appearance.Apply(data);
             creatorUi = CharacterCreatorUI.Create(appearance, data, SaveAndEnterWorld);
-            Text interactionPrompt;
-            gameplayHud = CreateGameplayHud(out interactionPrompt);
-            grabber.SetPrompt(interactionPrompt);
+            Button actionButton;
+            Text actionLabel;
+            Button useButton;
+            Button throwButton;
+            Button wakeButton;
+            Text wakeLabel;
+            Button skipWakeButton;
+            gameplayHud = CreateGameplayHud(out actionButton, out actionLabel, out useButton, out throwButton, out wakeButton, out wakeLabel, out skipWakeButton);
+            interaction.Initialize(grabber, pose, actionButton, actionLabel, useButton, throwButton);
+            wake = player.AddComponent<WakeFlow>();
+            wake.Initialize(pose, grabber, interaction, wakeButton, wakeLabel, skipWakeButton, GameObject.Find("Blanket"));
             gameplayHud.SetActive(false);
             EnterCreatorView(cameraObject.transform, player.transform);
         }
@@ -66,6 +92,7 @@ namespace LightweightGame.Runtime
         {
             playerController.enabled = false;
             grabber.enabled = false;
+            interaction.enabled = false;
             cameraController.enabled = false;
             previewCamera.enabled = true;
             cameraTransform.position = player.position + new Vector3(0f, 1.55f, 4.2f);
@@ -83,10 +110,23 @@ namespace LightweightGame.Runtime
             gameplayHud.SetActive(true);
             playerController.enabled = true;
             grabber.enabled = true;
+            interaction.enabled = true;
             cameraController.enabled = true;
             previewCamera.enabled = false;
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+            if (!enteredWorld)
+            {
+                enteredWorld = true;
+                wake.Begin();
+            }
+        }
+
+        private void OpenCreator()
+        {
+            gameplayHud.SetActive(false);
+            creatorUi.Show();
+            EnterCreatorView(Camera.main.transform, playerController.transform);
         }
 
         private static void BuildLighting()
@@ -100,7 +140,8 @@ namespace LightweightGame.Runtime
             lightObject.transform.rotation = Quaternion.Euler(48f, -32f, 0f);
         }
 
-        private static GameObject CreateGameplayHud(out Text interactionPrompt)
+        private static GameObject CreateGameplayHud(out Button actionButton, out Text actionLabel, out Button useButton, out Button throwButton,
+            out Button wakeButton, out Text wakeLabel, out Button skipWakeButton)
         {
             GameObject canvasObject = new GameObject("GameplayHUD", typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
             Canvas canvas = canvasObject.GetComponent<Canvas>();
@@ -122,20 +163,17 @@ namespace LightweightGame.Runtime
             text.fontSize = 16;
             text.color = Color.white;
             text.alignment = TextAnchor.UpperLeft;
-            text.text = "WASD Move  |  Shift Run  |  Space Jump x2  |  R Respawn\nMouse Look  |  E Pick Up/Put Down  |  F Use  |  Esc Unlock";
+            text.text = "WASD 移动  |  Shift 奔跑  |  Space 跳跃  |  R 重生  |  C 捏脸\n按住鼠标右键拖动镜头  |  点击屏幕按钮交互";
+            text.font = Font.CreateDynamicFontFromOSFont("Microsoft YaHei", 18);
 
-            GameObject promptObject = new GameObject("Prompt", typeof(RectTransform), typeof(Text));
-            promptObject.transform.SetParent(canvasObject.transform, false);
-            RectTransform promptRect = promptObject.GetComponent<RectTransform>();
-            promptRect.anchorMin = new Vector2(0.5f, 0.5f);
-            promptRect.anchorMax = new Vector2(0.5f, 0.5f);
-            promptRect.anchoredPosition = new Vector2(0f, -52f);
-            promptRect.sizeDelta = new Vector2(450f, 36f);
-            interactionPrompt = promptObject.GetComponent<Text>();
-            interactionPrompt.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-            interactionPrompt.fontSize = 19;
-            interactionPrompt.alignment = TextAnchor.MiddleCenter;
-            interactionPrompt.color = Color.white;
+            actionButton = CreateHudButton(canvasObject.transform, "InteractionButton", "靠近物品或家具", 38f, out actionLabel);
+            Text useLabel;
+            useButton = CreateHudButton(canvasObject.transform, "UseButton", "开关手电", 88f, out useLabel);
+            Text throwLabel;
+            throwButton = CreateHudButton(canvasObject.transform, "ThrowButton", "投掷", 138f, out throwLabel);
+            wakeButton = CreateHudButton(canvasObject.transform, "WakeButton", "掀开被子", 150f, out wakeLabel);
+            Text skipLabel;
+            skipWakeButton = CreateHudButton(canvasObject.transform, "SkipWakeButton", "跳过起床", 96f, out skipLabel);
 
             GameObject crosshairObject = new GameObject("Crosshair", typeof(RectTransform), typeof(Text));
             crosshairObject.transform.SetParent(canvasObject.transform, false);
@@ -150,6 +188,36 @@ namespace LightweightGame.Runtime
             crosshair.color = Color.white;
             crosshair.text = "+";
             return canvasObject;
+        }
+
+        private static Button CreateHudButton(Transform parent, string name, string caption, float bottom, out Text label)
+        {
+            GameObject buttonObject = new GameObject(name, typeof(RectTransform), typeof(Image), typeof(Button));
+            buttonObject.transform.SetParent(parent, false);
+            RectTransform rect = buttonObject.GetComponent<RectTransform>();
+            rect.anchorMin = new Vector2(0.5f, 0f);
+            rect.anchorMax = new Vector2(0.5f, 0f);
+            rect.pivot = new Vector2(0.5f, 0f);
+            rect.anchoredPosition = new Vector2(0f, bottom);
+            rect.sizeDelta = new Vector2(220f, 42f);
+            Image image = buttonObject.GetComponent<Image>();
+            image.color = new Color(0.12f, 0.28f, 0.35f, 0.94f);
+            Button button = buttonObject.GetComponent<Button>();
+            button.targetGraphic = image;
+            GameObject captionObject = new GameObject("Label", typeof(RectTransform), typeof(Text));
+            captionObject.transform.SetParent(buttonObject.transform, false);
+            RectTransform captionRect = captionObject.GetComponent<RectTransform>();
+            captionRect.anchorMin = Vector2.zero;
+            captionRect.anchorMax = Vector2.one;
+            captionRect.offsetMin = Vector2.zero;
+            captionRect.offsetMax = Vector2.zero;
+            label = captionObject.GetComponent<Text>();
+            label.font = Font.CreateDynamicFontFromOSFont("Microsoft YaHei", 20);
+            label.fontSize = 20;
+            label.alignment = TextAnchor.MiddleCenter;
+            label.color = Color.white;
+            label.text = caption;
+            return button;
         }
     }
 }

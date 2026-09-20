@@ -20,19 +20,28 @@ namespace LightweightGame.Runtime
             Material hair = RuntimeFactory.Material("Hair", new Color(0.055f, 0.025f, 0.012f));
 
             List<Renderer> skinRenderers = new List<Renderer>();
-            GameObject torso = RuntimeFactory.Primitive(PrimitiveType.Capsule, "Torso", visual, new Vector3(0f, 1.12f, 0f), new Vector3(0.34f, 0.40f, 0.24f), shirt);
+            GameObject torso = new GameObject("Torso", typeof(MeshFilter), typeof(MeshRenderer));
+            torso.transform.SetParent(visual, false);
+            torso.transform.localPosition = new Vector3(0f, 1.12f, 0f);
+            torso.transform.localScale = new Vector3(0.34f, 0.4f, 0.24f);
+            torso.GetComponent<MeshFilter>().sharedMesh = ProceduralTorsoMesh.Create();
+            torso.GetComponent<MeshRenderer>().sharedMaterial = shirt;
             GameObject leftLeg = RuntimeFactory.Primitive(PrimitiveType.Capsule, "LeftLeg", visual, new Vector3(-0.16f, 0.48f, 0f), new Vector3(0.13f, 0.40f, 0.13f), trousers);
             GameObject rightLeg = RuntimeFactory.Primitive(PrimitiveType.Capsule, "RightLeg", visual, new Vector3(0.16f, 0.48f, 0f), new Vector3(0.13f, 0.40f, 0.13f), trousers);
-            RuntimeFactory.Primitive(PrimitiveType.Cube, "LeftShoe", visual, new Vector3(-0.16f, 0.08f, 0.08f), new Vector3(0.25f, 0.13f, 0.42f), shoe);
-            RuntimeFactory.Primitive(PrimitiveType.Cube, "RightShoe", visual, new Vector3(0.16f, 0.08f, 0.08f), new Vector3(0.25f, 0.13f, 0.42f), shoe);
+            GameObject leftShoe = RuntimeFactory.Primitive(PrimitiveType.Capsule, "LeftShoe", visual, new Vector3(-0.16f, 0.13f, 0.11f), new Vector3(0.14f, 0.24f, 0.12f), shoe);
+            GameObject rightShoe = RuntimeFactory.Primitive(PrimitiveType.Capsule, "RightShoe", visual, new Vector3(0.16f, 0.13f, 0.11f), new Vector3(0.14f, 0.24f, 0.12f), shoe);
+            leftShoe.transform.localRotation = Quaternion.Euler(90f, 0f, 0f);
+            rightShoe.transform.localRotation = Quaternion.Euler(90f, 0f, 0f);
 
             GameObject leftArm = RuntimeFactory.Primitive(PrimitiveType.Capsule, "LeftArm", visual, new Vector3(-0.42f, 1.1f, 0f), new Vector3(0.11f, 0.38f, 0.11f), skin);
             GameObject rightArm = RuntimeFactory.Primitive(PrimitiveType.Capsule, "RightArm", visual, new Vector3(0.42f, 1.1f, 0f), new Vector3(0.11f, 0.38f, 0.11f), skin);
             leftArm.transform.localRotation = Quaternion.Euler(0f, 0f, -8f);
             rightArm.transform.localRotation = Quaternion.Euler(0f, 0f, 8f);
+            skinRenderers.Add(RuntimeFactory.Primitive(PrimitiveType.Sphere, "LeftHand", leftArm.transform, new Vector3(0f, -0.96f, 0f), Vector3.one, skin).GetComponent<Renderer>());
+            skinRenderers.Add(RuntimeFactory.Primitive(PrimitiveType.Sphere, "RightHand", rightArm.transform, new Vector3(0f, -0.96f, 0f), Vector3.one, skin).GetComponent<Renderer>());
             Transform handAnchor = new GameObject("RightHandAnchor").transform;
-            handAnchor.SetParent(rightArm.transform, false);
-            handAnchor.localPosition = new Vector3(0f, -0.8f, 0.6f);
+            handAnchor.SetParent(player.transform, false);
+            handAnchor.localPosition = new Vector3(0.52f, 1.05f, 0.55f);
             skinRenderers.Add(leftArm.GetComponent<Renderer>());
             skinRenderers.Add(rightArm.GetComponent<Renderer>());
 
@@ -90,16 +99,16 @@ namespace LightweightGame.Runtime
 
             styles[0] = new GameObject("Hair_Short");
             styles[0].transform.SetParent(head, false);
-            RuntimeFactory.Primitive(PrimitiveType.Sphere, "ShortCap", styles[0].transform, new Vector3(0f, 0.29f, -0.01f), new Vector3(0.33f, 0.17f, 0.30f), material);
+            RuntimeFactory.Primitive(PrimitiveType.Sphere, "ShortCap", styles[0].transform, new Vector3(0f, 0.38f, -0.01f), new Vector3(0.38f, 0.24f, 0.34f), material);
 
             styles[1] = new GameObject("Hair_Long");
             styles[1].transform.SetParent(head, false);
-            RuntimeFactory.Primitive(PrimitiveType.Sphere, "LongCap", styles[1].transform, new Vector3(0f, 0.28f, -0.01f), new Vector3(0.34f, 0.18f, 0.31f), material);
-            RuntimeFactory.Primitive(PrimitiveType.Cube, "LongBack", styles[1].transform, new Vector3(0f, -0.05f, -0.28f), new Vector3(0.55f, 0.65f, 0.08f), material);
+            RuntimeFactory.Primitive(PrimitiveType.Sphere, "LongCap", styles[1].transform, new Vector3(0f, 0.38f, -0.01f), new Vector3(0.38f, 0.24f, 0.34f), material);
+            RuntimeFactory.Primitive(PrimitiveType.Capsule, "LongBack", styles[1].transform, new Vector3(0f, -0.05f, -0.26f), new Vector3(0.29f, 0.42f, 0.08f), material);
 
             styles[2] = new GameObject("Hair_Bun");
             styles[2].transform.SetParent(head, false);
-            RuntimeFactory.Primitive(PrimitiveType.Sphere, "BunCap", styles[2].transform, new Vector3(0f, 0.28f, -0.01f), new Vector3(0.34f, 0.18f, 0.31f), material);
+            RuntimeFactory.Primitive(PrimitiveType.Sphere, "BunCap", styles[2].transform, new Vector3(0f, 0.38f, -0.01f), new Vector3(0.38f, 0.24f, 0.34f), material);
             RuntimeFactory.Primitive(PrimitiveType.Sphere, "Bun", styles[2].transform, new Vector3(0f, 0.43f, -0.14f), new Vector3(0.16f, 0.16f, 0.16f), material);
             return styles;
         }
