@@ -2,6 +2,7 @@ using LightweightGame.Core;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using LightweightGame.Interaction;
 
 namespace LightweightGame.Runtime
 {
@@ -16,6 +17,7 @@ namespace LightweightGame.Runtime
         private WakeFlow wake;
         private bool enteredWorld;
         private bool environmentHome;
+        private bool authoredEnvironment;
         private CharacterCreatorUI creatorUi;
         private GameObject gameplayHud;
 
@@ -25,24 +27,36 @@ namespace LightweightGame.Runtime
                 OpenCreator();
         }
 
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         private static void Initialize()
         {
+            SceneManager.sceneLoaded -= OnSceneLoaded;
+            SceneManager.sceneLoaded += OnSceneLoaded;
+        }
+
+        private static void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+        {
+            if (scene.name == "Environment_Select_V2") return;
             if (FindFirstObjectByType<GameBootstrap>() == null)
                 new GameObject("GameBootstrap").AddComponent<GameBootstrap>();
         }
 
         private void Awake()
         {
-            environmentHome = SceneManager.GetActiveScene().name == "Home_Environment_V2";
-            if (!environmentHome)
+            string sceneName = SceneManager.GetActiveScene().name;
+            environmentHome = sceneName == "Home_Environment_V2";
+            authoredEnvironment = environmentHome || sceneName == "School_Environment_V1"
+                || sceneName == "Park_Environment_V1" || sceneName == "Urban_Environment_V1";
+            if (!authoredEnvironment)
             {
                 BuildLighting();
                 TestWorldFactory.Create();
             }
 
             GameObject player = new GameObject("Player");
-            Transform homeSpawn = environmentHome ? GameObject.Find("HomeSpawn")?.transform : null;
+            Transform homeSpawn = authoredEnvironment
+                ? GameObject.Find(environmentHome ? "HomeSpawn" : "PlayerSpawn")?.transform
+                : null;
             player.transform.position = homeSpawn != null ? homeSpawn.position : new Vector3(0f, 0f, -5f);
             CharacterController characterController = player.AddComponent<CharacterController>();
             characterController.height = 2f;
@@ -88,11 +102,17 @@ namespace LightweightGame.Runtime
             Text wakeLabel;
             Button skipWakeButton;
             gameplayHud = CreateGameplayHud(out actionButton, out actionLabel, out useButton, out throwButton, out wakeButton, out wakeLabel, out skipWakeButton);
+            if (authoredEnvironment) EnvironmentNavigation.Attach(gameplayHud);
             interaction.Initialize(grabber, pose, actionButton, actionLabel, useButton, throwButton);
             wake = player.AddComponent<WakeFlow>();
             wake.Initialize(pose, grabber, interaction, wakeButton, wakeLabel, skipWakeButton, GameObject.Find("Blanket"));
             gameplayHud.SetActive(false);
             EnterCreatorView(cameraObject.transform, player.transform);
+            if (authoredEnvironment && PlayerPrefs.GetInt(EnvironmentSelectionUI.SkipCreatorKey, 0) == 1)
+            {
+                PlayerPrefs.DeleteKey(EnvironmentSelectionUI.SkipCreatorKey);
+                SaveAndEnterWorld(data);
+            }
         }
 
         private void EnterCreatorView(Transform cameraTransform, Transform player)
@@ -125,7 +145,7 @@ namespace LightweightGame.Runtime
             if (!enteredWorld)
             {
                 enteredWorld = true;
-                if (!environmentHome) wake.Begin();
+                if (!authoredEnvironment) wake.Begin();
             }
         }
 

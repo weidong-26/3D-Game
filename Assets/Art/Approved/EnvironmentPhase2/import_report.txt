@@ -1,0 +1,24 @@
+Unity 6000.0.40f1 / URP 17.0.4 / Environment Phase 2 import audit
+SchoolChair_01 | bounds(m): 0.566, 1.006, 0.675 | triangles: 5072 | materials: 1 | UV/normals/URP/collider: PASS
+SchoolDesk_01 | bounds(m): 0.712, 0.883, 0.546 | triangles: 4162 | materials: 1 | UV/normals/URP/collider: PASS
+standing_chalkboard_01 | bounds(m): 0.920, 1.509, 0.759 | triangles: 1988 | materials: 2 | UV/normals/URP/collider: PASS
+binder_notebook | bounds(m): 0.584, 0.025, 0.200 | triangles: 18077 | materials: 1 | UV/normals/URP/collider: PASS
+book_encyclopedia_set_01 | bounds(m): 0.551, 0.237, 0.163 | triangles: 67282 | materials: 2 | UV/normals/URP/collider: PASS
+mounted_fluorescent_lights | bounds(m): 0.912, 0.035, 0.645 | triangles: 17820 | materials: 2 | UV/normals/URP/collider: PASS
+painted_wooden_bench | bounds(m): 1.165, 0.889, 0.497 | triangles: 630 | materials: 1 | UV/normals/URP/collider: PASS
+fir_sapling | bounds(m): 2.743, 1.301, 0.826 | triangles: 433021 | materials: 2 | UV/normals/URP/collider: PASS
+shrub_04 | bounds(m): 0.747, 0.280, 0.187 | triangles: 27327 | materials: 1 | UV/normals/URP/collider: PASS
+street_lamp_02 | bounds(m): 0.386, 1.675, 0.807 | triangles: 20338 | materials: 3 | UV/normals/URP/collider: PASS
+metal_trash_can | bounds(m): 1.847, 0.906, 0.556 | triangles: 13960 | materials: 2 | UV/normals/URP/collider: PASS
+wooden_picnic_table | bounds(m): 2.241, 0.746, 3.022 | triangles: 10210 | materials: 2 | UV/normals/URP/collider: PASS
+modular_urban_apartments_facade | bounds(m): 51.530, 17.000, 6.665 | triangles: 270007 | materials: 5 | UV/normals/URP/collider: PASS
+modular_factory_facade | bounds(m): 53.330, 29.000, 5.356 | triangles: 174980 | materials: 6 | UV/normals/URP/collider: PASS
+fire_hydrant | bounds(m): 0.875, 0.799, 0.318 | triangles: 86316 | materials: 2 | UV/normals/URP/collider: PASS
+water_manhole_cover | bounds(m): 0.691, 0.068, 0.691 | triangles: 6301 | materials: 1 | UV/normals/URP/collider: PASS
+ApartmentWindowModule | bounds(m): 3.000, 3.000, 0.450 | triangles: 4352 | materials: 3 | UV/normals/URP/collider: PASS
+ApartmentDoorModule | bounds(m): 3.000, 3.000, 0.450 | triangles: 3965 | materials: 3 | UV/normals/URP/collider: PASS
+FactoryWindowModule | bounds(m): 3.000, 3.000, 0.450 | triangles: 2278 | materials: 3 | UV/normals/URP/collider: PASS
+FactoryGarageModule | bounds(m): 9.000, 3.000, 0.600 | triangles: 3768 | materials: 3 | UV/normals/URP/collider: PASS
+SchoolEnvironment | prefab composition and renderer density: PASS
+ParkEnvironment | prefab composition and renderer density: PASS
+UrbanEnvironment | prefab composition and renderer density: PASS

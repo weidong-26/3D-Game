@@ -1,0 +1,125 @@
+schema: unity-game-skills.approved-asset-registry.v1
+game: 3DGamePrototype
+style_id: modern_semi_realistic_v1
+phase: environment_2
+updated_at: 2026-09-21
+assets:
+  - id: SchoolChair_01
+    source: https://polyhaven.com/a/SchoolChair_01
+    license: CC0
+    prefab: Assets/Prefabs/EnvironmentPhase2/SchoolChair_01.prefab
+    qa: { import_valid: true, scale_valid: true, material_valid: true, collider_valid: true }
+  - id: SchoolDesk_01
+    source: https://polyhaven.com/a/SchoolDesk_01
+    license: CC0
+    prefab: Assets/Prefabs/EnvironmentPhase2/SchoolDesk_01.prefab
+    qa: { import_valid: true, scale_valid: true, material_valid: true, collider_valid: true }
+  - id: standing_chalkboard_01
+    source: https://polyhaven.com/a/standing_chalkboard_01
+    license: CC0
+    prefab: Assets/Prefabs/EnvironmentPhase2/standing_chalkboard_01.prefab
+    qa: { import_valid: true, scale_valid: true, material_valid: true, collider_valid: true }
+  - id: binder_notebook
+    source: https://polyhaven.com/a/binder_notebook
+    license: CC0
+    prefab: Assets/Prefabs/EnvironmentPhase2/binder_notebook.prefab
+    qa: { import_valid: true, scale_valid: true, material_valid: true, collider_valid: true }
+  - id: book_encyclopedia_set_01
+    source: https://polyhaven.com/a/book_encyclopedia_set_01
+    license: CC0
+    prefab: Assets/Prefabs/EnvironmentPhase2/book_encyclopedia_set_01.prefab
+    qa: { import_valid: true, scale_valid: true, material_valid: true, collider_valid: true }
+  - id: mounted_fluorescent_lights
+    source: https://polyhaven.com/a/mounted_fluorescent_lights
+    license: CC0
+    prefab: Assets/Prefabs/EnvironmentPhase2/mounted_fluorescent_lights.prefab
+    qa: { import_valid: true, scale_valid: true, material_valid: true, collider_valid: true }
+  - id: painted_wooden_bench
+    source: https://polyhaven.com/a/painted_wooden_bench
+    license: CC0
+    prefab: Assets/Prefabs/EnvironmentPhase2/painted_wooden_bench.prefab
+    qa: { import_valid: true, scale_valid: true, material_valid: true, collider_valid: true }
+  - id: fir_sapling
+    source: https://polyhaven.com/a/fir_sapling
+    license: CC0
+    prefab: Assets/Prefabs/EnvironmentPhase2/fir_sapling.prefab
+    qa: { import_valid: true, scale_valid: true, material_valid: true, collider_valid: true }
+  - id: shrub_04
+    source: https://polyhaven.com/a/shrub_04
+    license: CC0
+    prefab: Assets/Prefabs/EnvironmentPhase2/shrub_04.prefab
+    qa: { import_valid: true, scale_valid: true, material_valid: true, collider_valid: true }
+  - id: street_lamp_02
+    source: https://polyhaven.com/a/street_lamp_02
+    license: CC0
+    prefab: Assets/Prefabs/EnvironmentPhase2/street_lamp_02.prefab
+    qa: { import_valid: true, scale_valid: true, material_valid: true, collider_valid: true }
+  - id: metal_trash_can
+    source: https://polyhaven.com/a/metal_trash_can
+    license: CC0
+    prefab: Assets/Prefabs/EnvironmentPhase2/metal_trash_can.prefab
+    qa: { import_valid: true, scale_valid: true, material_valid: true, collider_valid: true }
+  - id: wooden_picnic_table
+    source: https://polyhaven.com/a/wooden_picnic_table
+    license: CC0
+    prefab: Assets/Prefabs/EnvironmentPhase2/wooden_picnic_table.prefab
+    qa: { import_valid: true, scale_valid: true, material_valid: true, collider_valid: true }
+  - id: modular_urban_apartments_facade
+    source: https://polyhaven.com/a/modular_urban_apartments_facade
+    license: CC0
+    prefab: Assets/Prefabs/EnvironmentPhase2/modular_urban_apartments_facade.prefab
+    qa: { import_valid: true, scale_valid: true, material_valid: true, collider_valid: true }
+  - id: modular_factory_facade
+    source: https://polyhaven.com/a/modular_factory_facade
+    license: CC0
+    prefab: Assets/Prefabs/EnvironmentPhase2/modular_factory_facade.prefab
+    qa: { import_valid: true, scale_valid: true, material_valid: true, collider_valid: true }
+  - id: fire_hydrant
+    source: https://polyhaven.com/a/fire_hydrant
+    license: CC0
+    prefab: Assets/Prefabs/EnvironmentPhase2/fire_hydrant.prefab
+    qa: { import_valid: true, scale_valid: true, material_valid: true, collider_valid: true }
+  - id: water_manhole_cover
+    source: https://polyhaven.com/a/water_manhole_cover
+    license: CC0
+    prefab: Assets/Prefabs/EnvironmentPhase2/water_manhole_cover.prefab
+    qa: { import_valid: true, scale_valid: true, material_valid: true, collider_valid: true }
+  - id: ApartmentWindowModule
+    derived_from: modular_urban_apartments_facade
+    source: https://polyhaven.com/a/modular_urban_apartments_facade
+    license: CC0
+    prefab: Assets/Prefabs/EnvironmentPhase2/ApartmentWindowModule.prefab
+    qa: { import_valid: true, scale_valid: true, material_valid: true, collider_valid: true }
+  - id: ApartmentDoorModule
+    derived_from: modular_urban_apartments_facade
+    source: https://polyhaven.com/a/modular_urban_apartments_facade
+    license: CC0
+    prefab: Assets/Prefabs/EnvironmentPhase2/ApartmentDoorModule.prefab
+    qa: { import_valid: true, scale_valid: true, material_valid: true, collider_valid: true }
+  - id: FactoryWindowModule
+    derived_from: modular_factory_facade
+    source: https://polyhaven.com/a/modular_factory_facade
+    license: CC0
+    prefab: Assets/Prefabs/EnvironmentPhase2/FactoryWindowModule.prefab
+    qa: { import_valid: true, scale_valid: true, material_valid: true, collider_valid: true }
+  - id: FactoryGarageModule
+    derived_from: modular_factory_facade
+    source: https://polyhaven.com/a/modular_factory_facade
+    license: CC0
+    prefab: Assets/Prefabs/EnvironmentPhase2/FactoryGarageModule.prefab
+    qa: { import_valid: true, scale_valid: true, material_valid: true, collider_valid: true }
+  - id: SchoolEnvironment
+    source: project-authored-composition
+    license: project-authored
+    prefab: Assets/Prefabs/Buildings/SchoolEnvironment.prefab
+    qa: { import_valid: true, scale_valid: true, material_valid: true, collider_valid: true, scene_test_valid: true }
+  - id: ParkEnvironment
+    source: project-authored-composition
+    license: project-authored
+    prefab: Assets/Prefabs/Buildings/ParkEnvironment.prefab
+    qa: { import_valid: true, scale_valid: true, material_valid: true, collider_valid: true, scene_test_valid: true }
+  - id: UrbanEnvironment
+    source: project-authored-composition
+    license: project-authored
+    prefab: Assets/Prefabs/Buildings/UrbanEnvironment.prefab
+    qa: { import_valid: true, scale_valid: true, material_valid: true, collider_valid: true, scene_test_valid: true }

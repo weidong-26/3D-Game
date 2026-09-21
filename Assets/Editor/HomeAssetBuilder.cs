@@ -62,9 +62,18 @@ namespace LightweightGame.Editor
             string normal = First(sourceFolder, prefix + "_nor_dx_1k.jpg", prefix + "_1K-JPG_NormalDX.jpg");
             string rough = First(sourceFolder, prefix + "_rough_1k.jpg", prefix + "_roughness_1k.jpg", prefix + "_1K-JPG_Roughness.jpg");
             string metal = First(sourceFolder, prefix + "_metal_1k.jpg", prefix + "_metallic_1k.jpg");
-            Texture2D baseMap = AssetDatabase.LoadAssetAtPath<Texture2D>(diffuse);
+            string alpha = First(sourceFolder, prefix + "_alpha_1k.jpg");
+            Texture2D baseMap = alpha == null
+                ? AssetDatabase.LoadAssetAtPath<Texture2D>(diffuse)
+                : PackBaseAlpha(name, diffuse, alpha);
             Texture2D normalMap = LoadNormal(normal);
             if (baseMap != null) result.SetTexture("_BaseMap", baseMap);
+            if (alpha != null)
+            {
+                result.SetFloat("_AlphaClip", 1f);
+                result.SetFloat("_Cutoff", 0.42f);
+                result.EnableKeyword("_ALPHATEST_ON");
+            }
             if (normalMap != null)
             {
                 result.SetTexture("_BumpMap", normalMap);
@@ -80,6 +89,28 @@ namespace LightweightGame.Editor
             }
             AssetDatabase.CreateAsset(result, path);
             return result;
+        }
+
+        private static Texture2D PackBaseAlpha(string name, string diffusePath, string alphaPath)
+        {
+            if (diffusePath == null || alphaPath == null) return null;
+            string path = Materials + "/" + name + "_BaseAlpha.png";
+            Texture2D existing = AssetDatabase.LoadAssetAtPath<Texture2D>(path);
+            if (existing != null) return existing;
+            Texture2D diffuse = Readable(diffusePath);
+            Texture2D alpha = Readable(alphaPath);
+            if (diffuse == null || alpha == null || diffuse.width != alpha.width || diffuse.height != alpha.height)
+                return diffuse;
+            Color32[] colors = diffuse.GetPixels32();
+            Color32[] masks = alpha.GetPixels32();
+            for (int i = 0; i < colors.Length; i++) colors[i].a = masks[i].r;
+            Texture2D result = new Texture2D(diffuse.width, diffuse.height, TextureFormat.RGBA32, true, false);
+            result.SetPixels32(colors);
+            result.Apply();
+            File.WriteAllBytes(Path.GetFullPath(path), result.EncodeToPNG());
+            Object.DestroyImmediate(result);
+            AssetDatabase.ImportAsset(path);
+            return AssetDatabase.LoadAssetAtPath<Texture2D>(path);
         }
 
         private static string First(string folder, params string[] names)
@@ -285,6 +316,71 @@ namespace LightweightGame.Editor
             instance.transform.localPosition = position;
             instance.transform.localRotation = rotation;
             return instance;
+        }
+
+        public static GameObject EnvironmentModel(string id, Transform parent, Vector3 position, Quaternion rotation)
+        {
+            const string prefabFolder = "Assets/Prefabs/EnvironmentPhase2";
+            Folder(prefabFolder);
+            string path = prefabFolder + "/" + id + ".prefab";
+            GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
+            if (prefab == null)
+            {
+                string folder = "Assets/Art/EnvironmentPhase2/PolyHaven/" + id;
+                GameObject imported = AssetDatabase.LoadAssetAtPath<GameObject>(folder + "/" + id + "_1k.fbx");
+                if (imported == null) throw new FileNotFoundException("Missing phase 2 model", id);
+                GameObject root = new GameObject(id);
+                GameObject mesh = (GameObject)PrefabUtility.InstantiatePrefab(imported);
+                mesh.transform.SetParent(root.transform, false);
+                foreach (Renderer renderer in mesh.GetComponentsInChildren<Renderer>())
+                {
+                    Material[] assigned = renderer.sharedMaterials;
+                    for (int i = 0; i < assigned.Length; i++)
+                    {
+                        string sourceName = assigned[i] != null ? assigned[i].name : id;
+                        string prefix = MaterialPrefix(folder, sourceName, id);
+                        assigned[i] = Surface("P2_" + id + "_" + sourceName, folder, prefix, Color.white);
+                    }
+                    renderer.sharedMaterials = assigned;
+                }
+                Bounds bounds = new Bounds(Vector3.zero, Vector3.zero);
+                bool first = true;
+                foreach (Renderer renderer in mesh.GetComponentsInChildren<Renderer>())
+                {
+                    if (first) { bounds = renderer.bounds; first = false; }
+                    else bounds.Encapsulate(renderer.bounds);
+                }
+                BoxCollider collider = root.AddComponent<BoxCollider>();
+                collider.center = bounds.center;
+                collider.size = bounds.size;
+                prefab = PrefabUtility.SaveAsPrefabAsset(root, path);
+                Object.DestroyImmediate(root);
+            }
+            GameObject instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
+            instance.transform.SetParent(parent, false);
+            instance.transform.localPosition = position;
+            instance.transform.localRotation = rotation;
+            return instance;
+        }
+
+        private static string MaterialPrefix(string folder, string sourceName, string fallback)
+        {
+            string normalized = sourceName.Replace(" ", "_").ToLowerInvariant();
+            string[] files = Directory.GetFiles(folder, "*_diff_1k.jpg", SearchOption.TopDirectoryOnly);
+            foreach (string file in files)
+            {
+                string prefix = Path.GetFileNameWithoutExtension(file).Replace("_diff_1k", "");
+                string candidate = prefix.ToLowerInvariant();
+                if (candidate == normalized || candidate.EndsWith("_" + normalized) || candidate.Contains(normalized))
+                    return prefix;
+            }
+            if (files.Length == 1) return Path.GetFileNameWithoutExtension(files[0]).Replace("_diff_1k", "");
+            foreach (string file in files)
+            {
+                string prefix = Path.GetFileNameWithoutExtension(file).Replace("_diff_1k", "");
+                if (prefix.StartsWith(fallback)) return prefix;
+            }
+            return fallback;
         }
     }
 }
