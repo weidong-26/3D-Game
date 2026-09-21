@@ -1,6 +1,7 @@
 using LightweightGame.Core;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 namespace LightweightGame.Runtime
 {
@@ -14,6 +15,7 @@ namespace LightweightGame.Runtime
         private PoseController pose;
         private WakeFlow wake;
         private bool enteredWorld;
+        private bool environmentHome;
         private CharacterCreatorUI creatorUi;
         private GameObject gameplayHud;
 
@@ -32,11 +34,16 @@ namespace LightweightGame.Runtime
 
         private void Awake()
         {
-            BuildLighting();
-            TestWorldFactory.Create();
+            environmentHome = SceneManager.GetActiveScene().name == "Home_Environment_V2";
+            if (!environmentHome)
+            {
+                BuildLighting();
+                TestWorldFactory.Create();
+            }
 
             GameObject player = new GameObject("Player");
-            player.transform.position = new Vector3(0f, 0f, -5f);
+            Transform homeSpawn = environmentHome ? GameObject.Find("HomeSpawn")?.transform : null;
+            player.transform.position = homeSpawn != null ? homeSpawn.position : new Vector3(0f, 0f, -5f);
             CharacterController characterController = player.AddComponent<CharacterController>();
             characterController.height = 2f;
             characterController.radius = 0.34f;
@@ -118,7 +125,7 @@ namespace LightweightGame.Runtime
             if (!enteredWorld)
             {
                 enteredWorld = true;
-                wake.Begin();
+                if (!environmentHome) wake.Begin();
             }
         }
 

@@ -1,0 +1,6 @@
+Scene: Home_Environment_V2
+Resolution: 1280x720
+GPU: Intel(R) UHD Graphics
+Average FPS over 120 Game frames: 60.1
+Draw Calls: 108
+Triangles: 85391

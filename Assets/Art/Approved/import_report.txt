@@ -1,0 +1,10 @@
+Unity 6000.0.40f1 / URP 17.0.4 / Home Environment V2 import audit
+modern_arm_chair_01 | collider(m): 0.820, 1.023, 0.987 | triangles: 8916 | materials: 2 | UV/normals/URP: PASS
+modern_coffee_table_01 | collider(m): 1.202, 0.390, 0.600 | triangles: 4504 | materials: 1 | UV/normals/URP: PASS
+modern_wooden_cabinet | collider(m): 2.440, 0.680, 0.520 | triangles: 24976 | materials: 5 | UV/normals/URP: PASS
+drawer_cabinet | collider(m): 1.141, 1.881, 0.488 | triangles: 26406 | materials: 5 | UV/normals/URP: PASS
+dining_chair_02 | collider(m): 0.434, 0.973, 0.576 | triangles: 22013 | materials: 1 | UV/normals/URP: PASS
+side_table_01 | collider(m): 0.550, 0.551, 0.450 | triangles: 2756 | materials: 1 | UV/normals/URP: PASS
+modern_ceiling_lamp_01 | collider(m): 0.432, 0.952, 0.432 | triangles: 5602 | materials: 3 | UV/normals/URP: PASS
+ModernHome scene prefab: PASS
+Interactable prefabs: 6 PASS
