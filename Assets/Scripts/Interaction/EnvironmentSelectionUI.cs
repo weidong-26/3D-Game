@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -10,6 +11,9 @@ namespace LightweightGame.Interaction
 
         private void Awake()
         {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+            EnsureEventSystem();
             Camera camera = Camera.main;
             if (camera == null)
             {
@@ -20,6 +24,12 @@ namespace LightweightGame.Interaction
             camera.clearFlags = CameraClearFlags.SolidColor;
             camera.backgroundColor = new Color(0.055f, 0.075f, 0.095f);
             CreateUi();
+        }
+
+        private static void EnsureEventSystem()
+        {
+            if (EventSystem.current != null) return;
+            new GameObject("EventSystem", typeof(EventSystem), typeof(StandaloneInputModule));
         }
 
         private void CreateUi()

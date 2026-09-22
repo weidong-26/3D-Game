@@ -3,6 +3,7 @@ using System.Collections;
 using System.Reflection;
 using LightweightGame.Runtime;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -35,6 +36,8 @@ namespace LightweightGame.Interaction
                     throw new Exception("Smoke must start from Environment_Select_V2");
                 if (FindObjectsByType<Button>(FindObjectsSortMode.None).Length < 4)
                     throw new Exception("Map selection cards missing");
+                if (EventSystem.current == null)
+                    throw new Exception("Map selection EventSystem missing");
             }
             catch (Exception exception) { failure = exception.ToString(); }
 
