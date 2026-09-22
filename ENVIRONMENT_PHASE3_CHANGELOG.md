@@ -9,6 +9,12 @@
 
 ## 已完成
 
+### 地图选择点击修复
+
+- 补充地图选择场景运行时 `EventSystem`，修复按钮显示正常但鼠标点击无响应的问题。
+- 进入地图选择时强制释放并显示鼠标。
+- 修复提交：`d76ebd3e769d15fae98f3c801eb11626b1bfce39`。
+
 ### 统一环境交互
 
 - 新增 `IEnvironmentInteractable`、`InteractionDetector` 和单例式 `InteractionPromptUI`。
@@ -41,4 +47,3 @@
 - 未修改人物外观、捏脸数据、Blend Shape 或角色生成流程。
 - 未增加 NPC、战斗、联网、商城、任务、完整背包、完整建造系统或大规模城市室内。
 - 本阶段没有新增第三方美术或代码资产。
-

@@ -7,6 +7,7 @@
 - Git 分支：`environment-phase3`
 - Phase 2 基线：`d44344ffdb60f5563751e00cc8abbfaf07278573`
 - Phase 3 实现提交：`15807ff1135626b4ffb627b039adc70775ad7524`
+- 地图选择点击修复：`d76ebd3e769d15fae98f3c801eb11626b1bfce39`
 - Windows 构建：`Builds/Windows/EnvironmentPhase3.exe`
 
 ## 2. 验收结果
@@ -28,6 +29,7 @@
 | 13 | Phase 2 地图回归 | 通过 | `PHASE2_SMOKE_PASS` |
 | 14 | 住宅旧功能回归 | 通过 | `HOME_SMOKE_PASS`、`HOME_BASIC_CHECKS_PASS`、`HOME_WALL_CAMERA_PASS` |
 | 15 | Console Error / Exception | 通过 | 最终构建、契约测试、场景测试、Phase 2/3 Player 日志未发现阻断性 Error 或 Exception |
+| 16 | 地图按钮鼠标输入 | 通过 | 运行时存在 `EventSystem`，桌面简化包复测输出 `PHASE3_INTERACTION_PASS` |
 
 ## 3. Windows Player 测试链路
 
@@ -75,4 +77,3 @@ NPC、复杂 AI、战斗、联网、商城、剧情、完整背包、完整建�
 ## 7. 人物与捏脸系统
 
 未修改人物外观、程序化头像、捏脸 UI、外观保存格式或 Blend Shape 逻辑。
-
