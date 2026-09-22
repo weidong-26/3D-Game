@@ -174,13 +174,54 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 381425851722911426, guid: ba8332a7fbf16a242be2c24634404a44, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5919297387489302093}
+    - targetCorrespondingSourceObject: {fileID: 3583357657575806795, guid: ba8332a7fbf16a242be2c24634404a44, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5919297387489302092}
   m_SourcePrefab: {fileID: 100100000, guid: ba8332a7fbf16a242be2c24634404a44, type: 3}
 --- !u!108 &5919297387489302089 stripped
 Light:
   m_CorrespondingSourceObject: {fileID: 3357456411606028270, guid: ba8332a7fbf16a242be2c24634404a44, type: 3}
   m_PrefabInstance: {fileID: 5919297387489302088}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &5919297387489302090 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3583357657575806795, guid: ba8332a7fbf16a242be2c24634404a44, type: 3}
+  m_PrefabInstance: {fileID: 5919297387489302088}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &5919297387489302091 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 381425851722911426, guid: ba8332a7fbf16a242be2c24634404a44, type: 3}
+  m_PrefabInstance: {fileID: 5919297387489302088}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &5919297387489302092
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5919297387489302090}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ce8c672a4af6ae648975a98045b8f307, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &5919297387489302093
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5919297387489302091}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 138dc300718a268478d608be9792176d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  minimumUpDot: 0.65
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

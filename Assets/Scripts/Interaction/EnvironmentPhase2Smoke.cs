@@ -67,13 +67,13 @@ namespace LightweightGame.Interaction
             if (scene == "School_Environment_V1")
             {
                 Required("ClassroomFloor", "ClassroomCeiling", "SchoolCorridorFloor", "ClassroomDoor", "ClassroomBlackboard", "StudentDesk_12", "StudentChair_12");
-                if (FindObjectsByType<HomeInteractable>(FindObjectsSortMode.None).Length < 2) throw new Exception("school interaction missing");
+                if (FindObjectsByType<Interactable>(FindObjectsSortMode.None).Length < 2) throw new Exception("school interaction missing");
                 Grounded(new Vector3(0, 0, -3.2f), new Vector3(4.1f, 0, 0.7f), new Vector3(0, 0, 6f));
             }
             else if (scene == "Park_Environment_V1")
             {
                 Required("ParkSafeGround", "ParkMainPath", "ParkCrossPath", "CentralPlaza", "PondWater", "PicnicTable", "ParkTree_12", "ParkBench_8", "ParkLamp_10");
-                if (FindObjectsByType<HomeInteractable>(FindObjectsSortMode.None).Length < 1) throw new Exception("park seating interaction missing");
+                if (FindObjectsByType<Interactable>(FindObjectsSortMode.None).Length < 1) throw new Exception("park seating interaction missing");
                 Grounded(new Vector3(0, 0, -22f), new Vector3(0, 0, 0), new Vector3(20f, 0, 0));
             }
             else

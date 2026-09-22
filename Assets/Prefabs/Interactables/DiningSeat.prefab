@@ -72,7 +72,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3219415365136422318}
   - component: {fileID: 6610279982075005135}
-  - component: {fileID: 3805861948820527382}
+  - component: {fileID: 1156701568380463484}
   m_Layer: 0
   m_Name: DiningSeat
   m_TagString: Untagged
@@ -110,7 +110,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d965c4e83f1dd1f47a9fd3807d5de85f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &3805861948820527382
+--- !u!114 &1156701568380463484
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -119,15 +119,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 4303457275487036397}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: eb41115681db19b4fae35248472d874a, type: 3}
+  m_Script: {fileID: 11500000, guid: c02a90bedaa564d4a94292815cc74e9a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  action: 2
-  movingPart: {fileID: 0}
-  posePoint: {fileID: 1382465875233887797}
-  standPoint: {fileID: 8051337608656728281}
-  openOffset: {x: 0, y: 0, z: 0}
-  openAngles: {x: 0, y: 0, z: 0}
+  seatPoint: {fileID: 1382465875233887797}
+  exitPoint: {fileID: 8051337608656728281}
 --- !u!1001 &6241899943301072530
 PrefabInstance:
   m_ObjectHideFlags: 0

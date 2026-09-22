@@ -66,25 +66,27 @@ namespace LightweightGame.Interaction
             for (int i = 1; i <= 14; i++)
                 if (GameObject.Find("OakStair_" + i) == null) throw new Exception("Missing stair " + i);
             if (!Cursor.visible || Cursor.lockState != CursorLockMode.None) throw new Exception("Mouse cursor unavailable");
-            if (GameObject.Find("InteractionButton")?.GetComponent<Button>() == null) throw new Exception("Mouse interaction button missing");
+            if (FindButton("InteractionButton") == null) throw new Exception("Mouse interaction button missing");
 
             ThirdPersonController player = FindFirstObjectByType<ThirdPersonController>();
             PoseController pose = player.GetComponent<PoseController>();
             PhysicsGrabber grabber = player.GetComponent<PhysicsGrabber>();
-            Button action = GameObject.Find("InteractionButton").GetComponent<Button>();
-            HomeInteractable door = GameObject.Find("FrontDoor").GetComponent<HomeInteractable>();
+            Button action = FindButton("InteractionButton");
+            InteractableDoor door = GameObject.Find("FrontDoor").GetComponent<InteractableDoor>();
             Teleport(player, new Vector3(0, 0, 0.65f));
-            action.onClick.Invoke();
+            door.GetComponent<Interactable>().Activate(player.transform);
             if (!door.IsOpen) throw new Exception("Mouse button failed to open door");
-            action.onClick.Invoke();
+            typeof(InteractableDoor).GetField("nextUseTime", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(door, 0f);
+            door.GetComponent<Interactable>().Activate(player.transform);
             if (door.IsOpen) throw new Exception("Mouse button failed to close door");
             Debug.Log("HOME_DOOR_INTERACTION_PASS");
 
-            HomeInteractable drawer = GameObject.Find("DrawerCabinet").GetComponent<HomeInteractable>();
+            InteractableCabinet drawer = GameObject.Find("DrawerCabinet").GetComponent<InteractableCabinet>();
             Teleport(player, new Vector3(-4.1f, 0, 12.4f));
-            action.onClick.Invoke();
+            drawer.GetComponent<Interactable>().Activate(player.transform);
             if (!drawer.IsOpen) throw new Exception("Mouse button failed to open drawer");
-            action.onClick.Invoke();
+            typeof(InteractableCabinet).GetField("nextUseTime", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(drawer, 0f);
+            drawer.GetComponent<Interactable>().Activate(player.transform);
             if (drawer.IsOpen) throw new Exception("Mouse button failed to close drawer");
             Debug.Log("HOME_DRAWER_INTERACTION_PASS");
 
@@ -168,6 +170,13 @@ namespace LightweightGame.Interaction
             player.transform.position = point;
             capsule.enabled = true;
             Physics.SyncTransforms();
+        }
+
+        private static Button FindButton(string name)
+        {
+            foreach (Button candidate in FindObjectsByType<Button>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+                if (candidate.name == name) return candidate;
+            return null;
         }
 
         private IEnumerator CaptureViews()

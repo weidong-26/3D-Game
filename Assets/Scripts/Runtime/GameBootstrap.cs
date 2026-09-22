@@ -57,6 +57,8 @@ namespace LightweightGame.Runtime
             Transform homeSpawn = authoredEnvironment
                 ? GameObject.Find(environmentHome ? "HomeSpawn" : "PlayerSpawn")?.transform
                 : null;
+            if (homeSpawn != null && homeSpawn.GetComponent<DefaultSpawnPoint>() == null)
+                homeSpawn.gameObject.AddComponent<DefaultSpawnPoint>();
             player.transform.position = homeSpawn != null ? homeSpawn.position : new Vector3(0f, 0f, -5f);
             CharacterController characterController = player.AddComponent<CharacterController>();
             characterController.height = 2f;
@@ -85,10 +87,14 @@ namespace LightweightGame.Runtime
             pose.Initialize(playerController, appearance.GetComponentInChildren<Animator>());
             foreach (PickupItem item in FindObjectsByType<PickupItem>(FindObjectsSortMode.None))
             {
-                PickupItem picked = item;
-                item.gameObject.AddComponent<Interactable>().Configure("拾取 " + item.DisplayName, delegate { grabber.Pickup(picked); });
+                if (item.GetComponent<Interactable>() == null) item.gameObject.AddComponent<Interactable>();
+                PickupInteractable pickup = item.GetComponent<PickupInteractable>();
+                if (pickup == null) pickup = item.gameObject.AddComponent<PickupInteractable>();
+                pickup.Bind(grabber);
             }
             interaction = player.AddComponent<InteractionController>();
+            PlayerRespawnSystem respawn = player.AddComponent<PlayerRespawnSystem>();
+            respawn.Initialize(playerController, homeSpawn);
             player.AddComponent<CharacterMotionAnimator>().Initialize(playerController, grabber, appearance.GetComponentInChildren<Animator>());
 
             AppearanceData data = AppearanceSaveService.LoadOrDefault();
@@ -103,7 +109,7 @@ namespace LightweightGame.Runtime
             Button skipWakeButton;
             gameplayHud = CreateGameplayHud(out actionButton, out actionLabel, out useButton, out throwButton, out wakeButton, out wakeLabel, out skipWakeButton);
             if (authoredEnvironment) EnvironmentNavigation.Attach(gameplayHud);
-            interaction.Initialize(grabber, pose, actionButton, actionLabel, useButton, throwButton);
+            interaction.Initialize(grabber, pose, mainCamera, actionButton, actionLabel, useButton, throwButton);
             wake = player.AddComponent<WakeFlow>();
             wake.Initialize(pose, grabber, interaction, wakeButton, wakeLabel, skipWakeButton, GameObject.Find("Blanket"));
             gameplayHud.SetActive(false);

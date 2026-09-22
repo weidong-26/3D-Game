@@ -12,6 +12,8 @@ GameObject:
   - component: {fileID: 2751193970683578789}
   - component: {fileID: 1566075616535792991}
   - component: {fileID: 1792243968647258491}
+  - component: {fileID: 4316517360651598315}
+  - component: {fileID: 6595322271826803533}
   m_Layer: 0
   m_Name: CarryBox
   m_TagString: Untagged
@@ -101,6 +103,30 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   displayName: "\u50A8\u7269\u7BB1"
   flashlight: {fileID: 0}
+--- !u!114 &4316517360651598315
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1388035957739620686}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d965c4e83f1dd1f47a9fd3807d5de85f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &6595322271826803533
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1388035957739620686}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e5cec6a0546a6b47b9e0deac3430ad5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &33214433746305049
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -29,6 +29,7 @@ namespace LightweightGame.Runtime
         public float PlanarSpeed { get { return planarVelocity.magnitude; } }
         public float VerticalSpeed { get { return verticalVelocity; } }
         public bool IsGrounded { get { return grounded; } }
+        public float RespawnHeight { get { return respawnHeight; } }
 
         private void Awake()
         {
@@ -41,9 +42,15 @@ namespace LightweightGame.Runtime
 
         public void Respawn()
         {
+            RespawnAt(safePosition);
+        }
+
+        public void RespawnAt(Vector3 point)
+        {
             controller.enabled = false;
-            transform.position = safePosition;
+            transform.position = point;
             controller.enabled = true;
+            safePosition = point;
             planarVelocity = Vector3.zero;
             verticalVelocity = 0f;
             airJumpsUsed = 0;
@@ -60,7 +67,6 @@ namespace LightweightGame.Runtime
         {
             if (cameraTransform == null) return;
             if (Input.GetKeyDown(KeyCode.R)) ReturnToSpawn();
-            if (MovementRules.NeedsRespawn(transform.position.y, respawnHeight)) Respawn();
 
             Vector3 forward = cameraTransform.forward;
             Vector3 right = cameraTransform.right;

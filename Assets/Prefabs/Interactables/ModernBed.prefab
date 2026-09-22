@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6580541326067532852}
   - component: {fileID: 330286854447354104}
-  - component: {fileID: 2662933247034632739}
+  - component: {fileID: 8648764467443431933}
   m_Layer: 0
   m_Name: ModernBed
   m_TagString: Untagged
@@ -53,7 +53,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d965c4e83f1dd1f47a9fd3807d5de85f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &2662933247034632739
+--- !u!114 &8648764467443431933
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -62,15 +62,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 4482775689405035228}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: eb41115681db19b4fae35248472d874a, type: 3}
+  m_Script: {fileID: 11500000, guid: 6fc2d233b9848a649ada3acb9858a479, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  action: 3
-  movingPart: {fileID: 0}
-  posePoint: {fileID: 4132188135144084242}
-  standPoint: {fileID: 368332641355568999}
-  openOffset: {x: 0, y: 0, z: 0}
-  openAngles: {x: 0, y: 0, z: 0}
+  liePoint: {fileID: 4132188135144084242}
+  exitPoint: {fileID: 368332641355568999}
 --- !u!1 &5787172001982862871
 GameObject:
   m_ObjectHideFlags: 0

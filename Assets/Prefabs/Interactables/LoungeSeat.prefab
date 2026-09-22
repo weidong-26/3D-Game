@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2465638736238200953}
   - component: {fileID: 4128955877921035465}
-  - component: {fileID: 3727926466033479504}
+  - component: {fileID: 4507868454910584200}
   m_Layer: 0
   m_Name: LoungeSeat
   m_TagString: Untagged
@@ -48,7 +48,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d965c4e83f1dd1f47a9fd3807d5de85f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &3727926466033479504
+--- !u!114 &4507868454910584200
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -57,15 +57,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 277085682948616965}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: eb41115681db19b4fae35248472d874a, type: 3}
+  m_Script: {fileID: 11500000, guid: c02a90bedaa564d4a94292815cc74e9a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  action: 2
-  movingPart: {fileID: 0}
-  posePoint: {fileID: 8939914508098489493}
-  standPoint: {fileID: 1574869773997444989}
-  openOffset: {x: 0, y: 0, z: 0}
-  openAngles: {x: 0, y: 0, z: 0}
+  seatPoint: {fileID: 8939914508098489493}
+  exitPoint: {fileID: 1574869773997444989}
 --- !u!1 &1740876047232078328
 GameObject:
   m_ObjectHideFlags: 0

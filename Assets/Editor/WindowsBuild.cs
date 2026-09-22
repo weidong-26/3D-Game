@@ -60,6 +60,33 @@ namespace LightweightGame.Editor
             Debug.Log("PHASE2_WINDOWS_BUILD_PASS " + report.summary.outputPath + " bytes=" + report.summary.totalSize);
         }
 
+        public static void BuildEnvironmentPhase3()
+        {
+            string[] scenes =
+            {
+                "Assets/Scenes/Environment_Select_V2.unity",
+                "Assets/Scenes/Home_Environment_V2.unity",
+                "Assets/Scenes/School_Environment_V1.unity",
+                "Assets/Scenes/Park_Environment_V1.unity",
+                "Assets/Scenes/Urban_Environment_V1.unity",
+                MainScene
+            };
+            string root = Directory.GetParent(Application.dataPath).FullName;
+            foreach (string scene in scenes)
+                if (!File.Exists(Path.Combine(root, scene))) throw new FileNotFoundException("Phase 3 scene is missing", scene);
+            EditorBuildSettings.scenes = Array.ConvertAll(scenes, scene => new EditorBuildSettingsScene(scene, true));
+            BuildReport report = BuildPipeline.BuildPlayer(new BuildPlayerOptions
+            {
+                scenes = scenes,
+                locationPathName = "Builds/Windows/EnvironmentPhase3.exe",
+                target = BuildTarget.StandaloneWindows64,
+                options = BuildOptions.StrictMode
+            });
+            if (report.summary.result != BuildResult.Succeeded)
+                throw new Exception("Environment phase 3 Windows build failed: " + report.summary.totalErrors + " errors.");
+            Debug.Log("PHASE3_WINDOWS_BUILD_PASS " + report.summary.outputPath + " bytes=" + report.summary.totalSize);
+        }
+
         public static void Build()
         {
             string projectRoot = Directory.GetParent(Application.dataPath).FullName;

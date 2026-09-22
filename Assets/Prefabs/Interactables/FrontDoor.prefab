@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8441974071958571270}
   - component: {fileID: 1649428153135306475}
-  - component: {fileID: 4940624664065785945}
+  - component: {fileID: 7588445109473398175}
   m_Layer: 0
   m_Name: FrontDoor
   m_TagString: Untagged
@@ -48,7 +48,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d965c4e83f1dd1f47a9fd3807d5de85f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &4940624664065785945
+--- !u!114 &7588445109473398175
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -57,15 +57,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 8178719712482321848}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: eb41115681db19b4fae35248472d874a, type: 3}
+  m_Script: {fileID: 11500000, guid: 8723327205e060a47aafe1e39995c1e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  action: 0
   movingPart: {fileID: 8441974071958571270}
-  posePoint: {fileID: 0}
-  standPoint: {fileID: 0}
-  openOffset: {x: 0, y: 0, z: 0}
   openAngles: {x: 0, y: -100, z: 0}
+  duration: 0.55
+  cooldown: 0.2
 --- !u!1001 &2925217524580700205
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -31,7 +31,7 @@ namespace LightweightGame.Interaction
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
             scaler.referenceResolution = new Vector2(1280f, 720f);
 
-            Text title = Text(canvasObject.transform, "第二阶段环境地图", 42, TextAnchor.MiddleCenter);
+            Text title = Text(canvasObject.transform, "环境地图选择", 42, TextAnchor.MiddleCenter);
             RectTransform titleRect = title.rectTransform;
             titleRect.anchorMin = new Vector2(0.5f, 1f);
             titleRect.anchorMax = new Vector2(0.5f, 1f);
@@ -116,4 +116,3 @@ namespace LightweightGame.Interaction
         }
     }
 }
-

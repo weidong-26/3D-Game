@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 255030203127602361}
   - component: {fileID: 6745932614047800427}
-  - component: {fileID: 4627339113923891075}
+  - component: {fileID: 3109185422318889749}
   m_Layer: 0
   m_Name: DrawerCabinet
   m_TagString: Untagged
@@ -46,7 +46,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d965c4e83f1dd1f47a9fd3807d5de85f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &4627339113923891075
+--- !u!114 &3109185422318889749
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -55,15 +55,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 8461705111798480928}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: eb41115681db19b4fae35248472d874a, type: 3}
+  m_Script: {fileID: 11500000, guid: b006626ebf160ac40be0b0b8f5528643, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  action: 1
   movingPart: {fileID: 3661219640485203649}
-  posePoint: {fileID: 0}
-  standPoint: {fileID: 0}
   openOffset: {x: 0, y: 0, z: -0.35}
   openAngles: {x: 0, y: 0, z: 0}
+  duration: 0.45
+  cooldown: 0.2
 --- !u!1001 &3689948749654214504
 PrefabInstance:
   m_ObjectHideFlags: 0
