@@ -5,10 +5,38 @@ namespace LightweightGame.Runtime
 {
     internal static class ProceduralAvatarFactory
     {
-        public static CharacterAppearance Create(GameObject player)
+        public static CharacterAppearance Create(GameObject player, GameObject visualPrefab = null)
         {
-            Transform visual = new GameObject("UnifiedCharacterVisual").transform;
-            visual.SetParent(player.transform, false);
+            return visualPrefab == null ? CreateProcedural(player) : CreateImported(player, visualPrefab);
+        }
+
+        private static CharacterAppearance CreateImported(GameObject player, GameObject visualPrefab)
+        {
+            Transform visual = CreateVisualRoot(player, out Transform cameraTarget, out Transform handAnchor);
+            GameObject model = Object.Instantiate(visualPrefab, visual, false);
+            model.name = visualPrefab.name;
+            model.transform.localPosition = Vector3.zero;
+            model.transform.localRotation = Quaternion.identity;
+            model.transform.localScale = Vector3.one;
+
+            Animator animator = model.GetComponentInChildren<Animator>();
+            if (animator == null)
+                animator = model.AddComponent<Animator>();
+            if (animator.avatar == null || !animator.avatar.isHuman)
+                Debug.LogWarning("Player visual prefab needs a Humanoid Avatar for CC4 retargeting.", model);
+            RuntimeAnimatorController controller = Resources.Load<RuntimeAnimatorController>("PrototypeAnimator");
+            if (controller != null && animator.runtimeAnimatorController == null)
+                animator.runtimeAnimatorController = controller;
+            animator.applyRootMotion = false;
+
+            CharacterAppearance appearance = player.AddComponent<CharacterAppearance>();
+            player.AddComponent<CharacterVisualRig>().Initialize(visual, animator, cameraTarget, handAnchor);
+            return appearance;
+        }
+
+        private static CharacterAppearance CreateProcedural(GameObject player)
+        {
+            Transform visual = CreateVisualRoot(player, out Transform cameraTarget, out Transform handAnchor);
 
             Material skin = RuntimeFactory.Material("Skin", new Color(0.75f, 0.48f, 0.32f));
             Material shirt = RuntimeFactory.Material("Shirt", new Color(0.13f, 0.35f, 0.62f));
@@ -39,9 +67,6 @@ namespace LightweightGame.Runtime
             rightArm.transform.localRotation = Quaternion.Euler(0f, 0f, 8f);
             skinRenderers.Add(RuntimeFactory.Primitive(PrimitiveType.Sphere, "LeftHand", leftArm.transform, new Vector3(0f, -0.96f, 0f), Vector3.one, skin).GetComponent<Renderer>());
             skinRenderers.Add(RuntimeFactory.Primitive(PrimitiveType.Sphere, "RightHand", rightArm.transform, new Vector3(0f, -0.96f, 0f), Vector3.one, skin).GetComponent<Renderer>());
-            Transform handAnchor = new GameObject("RightHandAnchor").transform;
-            handAnchor.SetParent(player.transform, false);
-            handAnchor.localPosition = new Vector3(0.52f, 1.05f, 0.55f);
             skinRenderers.Add(leftArm.GetComponent<Renderer>());
             skinRenderers.Add(rightArm.GetComponent<Renderer>());
 
@@ -78,11 +103,26 @@ namespace LightweightGame.Runtime
             CharacterAppearance appearance = player.AddComponent<CharacterAppearance>();
             appearance.Initialize(head, leftEye, rightEye, nose, upperLip, lowerLip, skinRenderers, hairStyles);
             appearance.InitializeBody(visual, torso.transform, leftArm.transform, rightArm.transform, leftLeg.transform, rightLeg.transform, leftBrow, rightBrow, hair, shirt);
-            appearance.HandAnchor = handAnchor;
             Animator animator = visual.gameObject.AddComponent<Animator>();
             animator.runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("PrototypeAnimator");
             animator.applyRootMotion = false;
+            player.AddComponent<CharacterVisualRig>().Initialize(visual, animator, cameraTarget, handAnchor);
             return appearance;
+        }
+
+        private static Transform CreateVisualRoot(GameObject player, out Transform cameraTarget, out Transform handAnchor)
+        {
+            Transform visual = new GameObject("CharacterVisual").transform;
+            visual.SetParent(player.transform, false);
+
+            cameraTarget = new GameObject("CameraTarget").transform;
+            cameraTarget.SetParent(visual, false);
+            cameraTarget.localPosition = new Vector3(0f, 1.45f, 0f);
+
+            handAnchor = new GameObject("RightHandAnchor").transform;
+            handAnchor.SetParent(player.transform, false);
+            handAnchor.localPosition = new Vector3(0.52f, 1.05f, 0.55f);
+            return visual;
         }
 
         private static Transform CreateEye(string name, Transform parent, Material white, Material dark)

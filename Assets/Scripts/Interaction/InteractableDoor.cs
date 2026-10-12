@@ -11,6 +11,8 @@ namespace LightweightGame.Interaction
         [SerializeField] private Vector3 openAngles = new Vector3(0f, -100f, 0f);
         [SerializeField] private float duration = 0.55f;
         [SerializeField] private float cooldown = 0.2f;
+        private string openLabel = "打开门";
+        private string closeLabel = "关闭门";
         private Interactable interactable;
         private Quaternion closedRotation;
         private Coroutine animation;
@@ -21,6 +23,13 @@ namespace LightweightGame.Interaction
         {
             movingPart = part;
             openAngles = angles;
+        }
+
+        public void ConfigurePromptLabels(string openPrompt, string closePrompt)
+        {
+            if (!string.IsNullOrEmpty(openPrompt)) openLabel = openPrompt;
+            if (!string.IsNullOrEmpty(closePrompt)) closeLabel = closePrompt;
+            if (interactable != null) Refresh();
         }
 
         private void Awake()
@@ -43,7 +52,7 @@ namespace LightweightGame.Interaction
 
         private void Refresh()
         {
-            interactable.Configure(IsOpen ? "关闭门" : "打开门", Interact);
+            interactable.Configure(IsOpen ? closeLabel : openLabel, Interact);
         }
 
         private IEnumerator Animate()

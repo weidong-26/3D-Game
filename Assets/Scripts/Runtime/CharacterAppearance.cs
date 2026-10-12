@@ -6,7 +6,6 @@ namespace LightweightGame.Runtime
 {
     public sealed class CharacterAppearance : MonoBehaviour
     {
-        public Transform HandAnchor { get; internal set; }
         private SkinnedMeshRenderer head;
         private Transform leftEye;
         private Transform rightEye;

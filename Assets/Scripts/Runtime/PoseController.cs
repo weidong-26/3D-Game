@@ -22,21 +22,22 @@ namespace LightweightGame.Runtime
         private Quaternion toRotation;
         private Quaternion fromLeftLeg;
         private Quaternion fromRightLeg;
-        private Quaternion toLegRotation;
+        private Quaternion toLeftLegRotation;
+        private Quaternion toRightLegRotation;
         private float transitionStart;
         public bool IsPosed { get; private set; }
 
-        public void Initialize(ThirdPersonController controller, Animator visualAnimator)
+        public void Initialize(ThirdPersonController controller, CharacterVisualRig visualRig)
         {
             movement = controller;
-            animator = visualAnimator;
-            visual = visualAnimator.transform;
-            leftLeg = visual.Find("LeftLeg");
-            rightLeg = visual.Find("RightLeg");
+            animator = visualRig.Animator;
+            visual = visualRig.VisualRoot;
+            leftLeg = visualRig.GetHumanoidBone(HumanBodyBones.LeftUpperLeg) ?? visual.Find("LeftLeg");
+            rightLeg = visualRig.GetHumanoidBone(HumanBodyBones.RightUpperLeg) ?? visual.Find("RightLeg");
             normalPosition = visual.localPosition;
             normalRotation = visual.localRotation;
-            leftLegRotation = leftLeg.localRotation;
-            rightLegRotation = rightLeg.localRotation;
+            leftLegRotation = leftLeg != null ? leftLeg.localRotation : Quaternion.identity;
+            rightLegRotation = rightLeg != null ? rightLeg.localRotation : Quaternion.identity;
         }
 
         public void Enter(PoseKind kind, Vector3 place, Quaternion facing, Vector3 standAt)
@@ -44,7 +45,7 @@ namespace LightweightGame.Runtime
             if (IsPosed) return;
             exitPosition = standAt;
             movement.enabled = false;
-            animator.enabled = false;
+            if (animator != null) animator.enabled = false;
             transform.SetPositionAndRotation(place, facing);
             IsPosed = true;
             Change(kind);
@@ -55,11 +56,12 @@ namespace LightweightGame.Runtime
             if (!IsPosed) return;
             fromPosition = visual.localPosition;
             fromRotation = visual.localRotation;
-            fromLeftLeg = leftLeg.localRotation;
-            fromRightLeg = rightLeg.localRotation;
+            fromLeftLeg = leftLeg != null ? leftLeg.localRotation : Quaternion.identity;
+            fromRightLeg = rightLeg != null ? rightLeg.localRotation : Quaternion.identity;
             toPosition = kind == PoseKind.Lying ? new Vector3(0f, 0.91f, 0f) : new Vector3(0f, -0.18f, 0f);
             toRotation = kind == PoseKind.Lying ? Quaternion.Euler(90f, 0f, 0f) : normalRotation;
-            toLegRotation = kind == PoseKind.Sitting ? Quaternion.Euler(-65f, 0f, 0f) : leftLegRotation;
+            toLeftLegRotation = kind == PoseKind.Sitting ? leftLegRotation * Quaternion.Euler(-65f, 0f, 0f) : leftLegRotation;
+            toRightLegRotation = kind == PoseKind.Sitting ? rightLegRotation * Quaternion.Euler(-65f, 0f, 0f) : rightLegRotation;
             transitionStart = Time.time;
         }
 
@@ -69,8 +71,8 @@ namespace LightweightGame.Runtime
             float progress = Mathf.Clamp01((Time.time - transitionStart) / 0.45f);
             visual.localPosition = Vector3.Lerp(fromPosition, toPosition, progress);
             visual.localRotation = Quaternion.Slerp(fromRotation, toRotation, progress);
-            leftLeg.localRotation = Quaternion.Slerp(fromLeftLeg, toLegRotation, progress);
-            rightLeg.localRotation = Quaternion.Slerp(fromRightLeg, toLegRotation, progress);
+            if (leftLeg != null) leftLeg.localRotation = Quaternion.Slerp(fromLeftLeg, toLeftLegRotation, progress);
+            if (rightLeg != null) rightLeg.localRotation = Quaternion.Slerp(fromRightLeg, toRightLegRotation, progress);
         }
 
         public void Stand(bool resumeMovement = true)
@@ -79,10 +81,10 @@ namespace LightweightGame.Runtime
             IsPosed = false;
             visual.localPosition = normalPosition;
             visual.localRotation = normalRotation;
-            leftLeg.localRotation = leftLegRotation;
-            rightLeg.localRotation = rightLegRotation;
+            if (leftLeg != null) leftLeg.localRotation = leftLegRotation;
+            if (rightLeg != null) rightLeg.localRotation = rightLegRotation;
             transform.position = exitPosition;
-            animator.enabled = true;
+            if (animator != null) animator.enabled = true;
             movement.enabled = resumeMovement;
         }
 

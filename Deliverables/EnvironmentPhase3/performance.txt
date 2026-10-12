@@ -1,0 +1,4 @@
+School_Environment_V1 | ExplicitRender1280x720FPS=345.4 | DrawCalls=198 | Triangles=328060
+Home_Environment_V2 | ExplicitRender1280x720FPS=685.0 | DrawCalls=116 | Triangles=64906
+Park_Environment_V1 | ExplicitRender1280x720FPS=343.7 | DrawCalls=207 | Triangles=2595499
+Urban_Environment_V1 | ExplicitRender1280x720FPS=589.9 | DrawCalls=446 | Triangles=903499

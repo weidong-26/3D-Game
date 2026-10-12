@@ -11,6 +11,7 @@ namespace LightweightGame.Runtime
         private Button useButton;
         private Button throwButton;
         private PoseController pose;
+        private CharacterMotionAnimator motionAnimator;
         private Interactable highlighted;
         private InteractionDetector detector;
         private InteractionPromptUI prompt;
@@ -20,6 +21,7 @@ namespace LightweightGame.Runtime
         {
             grabber = pickup;
             pose = poseController;
+            motionAnimator = GetComponent<CharacterMotionAnimator>();
             button = primary;
             useButton = secondary;
             throwButton = throwAction;
@@ -36,6 +38,7 @@ namespace LightweightGame.Runtime
         private void Update()
         {
             if (button == null) return;
+            if (prompt != null) prompt.UpdateMessage();
             if (Input.GetKeyDown(KeyCode.E)) Click();
             if (Input.GetKeyDown(KeyCode.F) && grabber.CanUseHeld) grabber.UseHeld();
             Interactable nearest = grabber.IsHolding || pose.IsPosed ? null : detector.Detect();
@@ -45,7 +48,7 @@ namespace LightweightGame.Runtime
                 highlighted = nearest;
                 if (highlighted != null) highlighted.Highlight(true);
             }
-            string label = pose.IsPosed ? "E 起身" : grabber.IsHolding ? "E 放置" : nearest != null ? "E " + nearest.Label : string.Empty;
+            string label = pose.IsPosed ? "按 E 起身" : grabber.IsHolding ? "按 E 放置" : nearest != null ? "按 E " + nearest.Label : string.Empty;
             prompt.SetPrompt(label, pose.IsPosed || grabber.IsHolding || nearest != null);
             useButton.gameObject.SetActive(grabber.CanUseHeld);
             throwButton.gameObject.SetActive(grabber.IsHolding);
@@ -58,9 +61,18 @@ namespace LightweightGame.Runtime
             else
             {
                 Interactable nearest = detector.Detect();
-                if (nearest != null) nearest.Activate(transform);
+                if (nearest != null)
+                {
+                    nearest.Activate(transform);
+                    if (motionAnimator != null) motionAnimator.PlayInteraction();
+                }
             }
             Update();
+        }
+
+        public void ShowMessage(string value)
+        {
+            if (prompt != null) prompt.ShowMessage(value);
         }
 
         private void OnDisable()
@@ -71,6 +83,7 @@ namespace LightweightGame.Runtime
             if (useButton != null) useButton.gameObject.SetActive(false);
             if (throwButton != null) throwButton.gameObject.SetActive(false);
             if (prompt != null) prompt.SetPrompt(string.Empty, false);
+            if (prompt != null) prompt.ClearMessage();
         }
 
         private void OnEnable() { if (button != null) button.gameObject.SetActive(true); }

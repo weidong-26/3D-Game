@@ -9,8 +9,8 @@ namespace LightweightGame.Runtime
         [Header("Movement")]
         [SerializeField] private float walkSpeed = 3.5f;
         [SerializeField] private float runSpeed = 6f;
-        [SerializeField] private float acceleration = 16f;
-        [SerializeField] private float turnSpeed = 14f;
+        [SerializeField] private float acceleration = 12f;
+        [SerializeField] private float turnSpeed = 540f;
         [Header("Jump and recovery")]
         [SerializeField] private float jumpHeight = 1.35f;
         [SerializeField] private int maximumAirJumps = 1;
@@ -79,7 +79,7 @@ namespace LightweightGame.Runtime
             float speed = Input.GetKey(KeyCode.LeftShift) ? runSpeed : walkSpeed;
             planarVelocity = Vector3.MoveTowards(planarVelocity, direction * speed, acceleration * Time.deltaTime);
             if (direction.sqrMagnitude > 0.001f)
-                transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(direction), turnSpeed * Time.deltaTime);
+                transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(direction), turnSpeed * Time.deltaTime);
 
             grounded = controller.isGrounded;
             if (grounded)

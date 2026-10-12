@@ -68,7 +68,9 @@ namespace LightweightGame.Runtime
             characterController.stepOffset = 0.3f;
             characterController.skinWidth = 0.04f;
             playerController = player.AddComponent<ThirdPersonController>();
-            CharacterAppearance appearance = ProceduralAvatarFactory.Create(player);
+            PlayerVisualProfile visualProfile = Resources.Load<PlayerVisualProfile>("CharacterModels/PlayerVisualProfile");
+            CharacterAppearance appearance = ProceduralAvatarFactory.Create(player, visualProfile != null ? visualProfile.VisualPrefab : null);
+            CharacterVisualRig characterVisual = player.GetComponent<CharacterVisualRig>();
 
             GameObject cameraObject = new GameObject("Main Camera", typeof(Camera), typeof(AudioListener), typeof(ThirdPersonCamera), typeof(CharacterPreviewCamera));
             cameraObject.tag = "MainCamera";
@@ -76,15 +78,15 @@ namespace LightweightGame.Runtime
             mainCamera.fieldOfView = 55f;
             mainCamera.clearFlags = CameraClearFlags.Skybox;
             cameraController = cameraObject.GetComponent<ThirdPersonCamera>();
-            cameraController.SetTarget(player.transform);
+            cameraController.SetTarget(characterVisual.CameraTarget);
             previewCamera = cameraObject.GetComponent<CharacterPreviewCamera>();
-            previewCamera.SetTarget(player.transform);
+            previewCamera.SetTarget(characterVisual.CameraTarget);
             playerController.SetCamera(cameraObject.transform);
             grabber = player.AddComponent<PhysicsGrabber>();
             grabber.SetCamera(mainCamera);
-            grabber.SetHandAnchor(appearance.HandAnchor);
+            grabber.SetHandAnchor(characterVisual.RightHandAnchor);
             pose = player.AddComponent<PoseController>();
-            pose.Initialize(playerController, appearance.GetComponentInChildren<Animator>());
+            pose.Initialize(playerController, characterVisual);
             foreach (PickupItem item in FindObjectsByType<PickupItem>(FindObjectsSortMode.None))
             {
                 if (item.GetComponent<Interactable>() == null) item.gameObject.AddComponent<Interactable>();
@@ -95,7 +97,7 @@ namespace LightweightGame.Runtime
             interaction = player.AddComponent<InteractionController>();
             PlayerRespawnSystem respawn = player.AddComponent<PlayerRespawnSystem>();
             respawn.Initialize(playerController, homeSpawn);
-            player.AddComponent<CharacterMotionAnimator>().Initialize(playerController, grabber, appearance.GetComponentInChildren<Animator>());
+            player.AddComponent<CharacterMotionAnimator>().Initialize(playerController, grabber, characterVisual.Animator);
 
             AppearanceData data = AppearanceSaveService.LoadOrDefault();
             appearance.Apply(data);
@@ -151,8 +153,60 @@ namespace LightweightGame.Runtime
             if (!enteredWorld)
             {
                 enteredWorld = true;
-                if (!authoredEnvironment) wake.Begin();
+                if (authoredEnvironment) SpawnEnvironmentNpcs(SceneManager.GetActiveScene().name);
+                else wake.Begin();
             }
+        }
+
+        private static void SpawnEnvironmentNpcs(string sceneName)
+        {
+            if (sceneName == "School_Environment_V1")
+            {
+                ConfigureDoorPrompt("ClassroomDoor", "打开教学楼入口", "关闭教学楼入口");
+                SpawnNpcNear("StudentChair_1", new Vector3(1.1f, 0f, 0.7f), "学生", "下节课去操场吧。", 2);
+                SpawnNpcNear("TeacherDesk", new Vector3(1.5f, 0f, 0.8f), "老师", "教学楼入口在前面。", 1);
+            }
+            else if (sceneName == "Park_Environment_V1")
+            {
+                SpawnNpcNear("ParkBench_1", new Vector3(0.9f, 0f, 1.1f), "晨练居民", "沿着步道走一圈吧。", 0);
+                SpawnNpcNear("CentralPlaza", new Vector3(2f, 0f, -1.5f), "公园游客", "这里可以坐下休息。", 1);
+            }
+            else if (sceneName == "Home_Environment_V2")
+            {
+                SpawnNpcNear("FrontDoor", new Vector3(1.6f, 0f, 1.4f), "邻居", "今天的天气不错。", 0);
+            }
+            else if (sceneName == "Urban_Environment_V1")
+            {
+                ConfigureDoorPrompt("UrbanExampleDoor", "打开商店门", "关闭商店门");
+                SpawnNpcNear("UrbanExampleDoor", new Vector3(1.6f, 0f, 2f), "店员", "欢迎光临，需要什么？", 1);
+            }
+        }
+
+        private static void ConfigureDoorPrompt(string objectName, string openPrompt, string closePrompt)
+        {
+            GameObject doorObject = GameObject.Find(objectName);
+            if (doorObject == null) return;
+            InteractableDoor door = doorObject.GetComponent<InteractableDoor>();
+            if (door != null) door.ConfigurePromptLabels(openPrompt, closePrompt);
+        }
+
+        private static void SpawnNpcNear(string anchorName, Vector3 localOffset, string displayName, string greeting, int outfit)
+        {
+            GameObject anchor = GameObject.Find(anchorName);
+            if (anchor == null || GameObject.Find("NPC_" + displayName) != null) return;
+
+            GameObject npc = new GameObject("NPC_" + displayName);
+            npc.transform.SetPositionAndRotation(anchor.transform.TransformPoint(localOffset), anchor.transform.rotation);
+            CharacterController capsule = npc.AddComponent<CharacterController>();
+            capsule.height = 2f;
+            capsule.radius = 0.34f;
+            capsule.center = new Vector3(0f, 1f, 0f);
+            CharacterAppearance appearance = ProceduralAvatarFactory.Create(npc);
+            AppearanceData appearanceData = AppearanceData.CreateDefault();
+            appearanceData.Outfit = outfit;
+            appearance.Apply(appearanceData);
+            npc.AddComponent<Interactable>();
+            npc.AddComponent<NpcInteractable>().Configure(displayName, greeting);
         }
 
         private void OpenCreator()

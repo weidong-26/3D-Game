@@ -18,3 +18,8 @@
 Tests/CoreTests.exe
 Tests/UnityScriptsSyntax.dll
 Tests/UnityEditorScriptsSyntax.dll
+
+# Local checkpoints and generated release exports stay on this drive.
+/_local_archive/
+/Deliverables/**/*.zip
+/Deliverables/**/WindowsBuild/

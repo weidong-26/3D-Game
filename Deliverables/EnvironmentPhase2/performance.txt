@@ -1,0 +1,3 @@
+School_Environment_V1 | FPS=60.0 | DrawCalls=416 | Triangles=609303
+Park_Environment_V1 | FPS=60.0 | DrawCalls=74 | Triangles=1401501
+Urban_Environment_V1 | FPS=60.0 | DrawCalls=315 | Triangles=641193

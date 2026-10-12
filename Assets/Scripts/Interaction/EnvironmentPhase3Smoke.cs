@@ -181,7 +181,34 @@ namespace LightweightGame.Interaction
             yield return null;
             if (error == null && FindObjectsByType<ThirdPersonController>(FindObjectsSortMode.None).Length != 1)
                 error = "Player count invalid in " + scene;
+            if (error == null) error = CheckNpcInteractions(scene);
             fail(error);
+        }
+
+        private static string CheckNpcInteractions(string scene)
+        {
+            Type npcType = Type.GetType("LightweightGame.Runtime.NpcInteractable, Assembly-CSharp");
+            if (npcType == null) return "NPC interaction component missing in " + scene;
+
+            int expected = scene == "School_Environment_V1" || scene == "Park_Environment_V1" ? 2 : 1;
+            Component firstNpc = null;
+            int count = 0;
+            foreach (MonoBehaviour behaviour in FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None))
+            {
+                if (!npcType.IsInstanceOfType(behaviour)) continue;
+                count++;
+                if (firstNpc == null) firstNpc = behaviour;
+            }
+            if (count != expected) return "NPC count mismatch in " + scene + ": " + count;
+
+            Interactable interactable = firstNpc.GetComponent<Interactable>();
+            if (interactable == null || interactable.Label != "交谈" || !interactable.CanInteract(Player().transform))
+                return "NPC conversation prompt missing in " + scene;
+            interactable.Activate(Player().transform);
+            Text message = GameObject.Find("DialogueMessage")?.GetComponent<Text>();
+            if (message == null || !message.gameObject.activeSelf || !message.text.Contains("："))
+                return "NPC greeting missing in " + scene;
+            return null;
         }
 
         private static ThirdPersonController Player()

@@ -60,7 +60,7 @@ GraphicsSettings:
   m_RenderPipelineGlobalSettingsMap:
     UnityEngine.Rendering.Universal.UniversalRenderPipeline: {fileID: 11400000, guid: 0aa2e11519a781e49844104d9d03c627, type: 2}
   m_LightsUseLinearIntensity: 0
-  m_LightsUseColorTemperature: 0
+  m_LightsUseColorTemperature: 1
   m_LogWhenShaderIsCompiled: 0
   m_LightProbeOutsideHullStrategy: 1
   m_CameraRelativeLightCulling: 0

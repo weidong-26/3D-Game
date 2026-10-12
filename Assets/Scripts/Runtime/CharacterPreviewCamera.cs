@@ -21,7 +21,7 @@ namespace LightweightGame.Runtime
             }
             distance = Mathf.Clamp(distance - Input.GetAxis("Mouse ScrollWheel") * 2f, 2.2f, 6f);
             Quaternion rotation = Quaternion.Euler(pitch, yaw, 0f);
-            Vector3 focus = target.position + Vector3.up * 1.35f;
+            Vector3 focus = target.position;
             transform.SetPositionAndRotation(focus - rotation * Vector3.forward * distance, rotation);
         }
     }
